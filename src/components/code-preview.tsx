@@ -8,10 +8,10 @@ export function CodePreview({ snippet }: { snippet: CodeSnippet }) {
   const previewCode = lines.join("\n")
 
   return (
-    <div className="relative cursor-pointer group">
+    <div className="relative cursor-pointer group max-w-full">
       <Highlight code={previewCode} language={snippet.language} theme={themes.nightOwl}>
         {({ tokens, getLineProps, getTokenProps }) => (
-          <pre className="p-3 sm:p-4 text-[10px] sm:text-xs leading-relaxed overflow-x-auto font-mono !bg-[#011627] m-0 select-none whitespace-pre">
+          <pre className="p-3 sm:p-4 text-[10px] sm:text-xs leading-relaxed overflow-x-auto max-w-full font-mono !bg-[#011627] m-0 select-none whitespace-pre">
             <code>
               {tokens.map((line, i) => (
                 <div key={i} {...getLineProps({ line })} className="table-row">

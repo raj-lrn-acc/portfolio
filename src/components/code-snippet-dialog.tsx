@@ -33,7 +33,7 @@ function CopyButton({ code }: { code: string }) {
 
 function CodeBlock({ snippet }: { snippet: CodeSnippet }) {
   return (
-    <div className="relative rounded-lg overflow-hidden border">
+    <div className="relative rounded-lg overflow-hidden border max-w-full">
       <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-[#011627] border-b border-white/10 gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <span className="text-[10px] sm:text-xs text-white/70 font-mono truncate">{snippet.label}</span>
@@ -45,7 +45,7 @@ function CodeBlock({ snippet }: { snippet: CodeSnippet }) {
       </div>
       <Highlight code={snippet.code.trim()} language={snippet.language} theme={themes.nightOwl}>
         {({ tokens, getLineProps, getTokenProps }) => (
-          <pre className="p-3 sm:p-4 text-[10px] sm:text-xs leading-relaxed overflow-auto max-h-[50vh] sm:max-h-[60vh] font-mono !bg-[#011627] m-0 whitespace-pre">
+          <pre className="p-3 sm:p-4 text-[10px] sm:text-xs leading-relaxed overflow-auto max-w-full max-h-[50vh] sm:max-h-[60vh] font-mono !bg-[#011627] m-0 whitespace-pre">
             <code>
               {tokens.map((line, i) => (
                 <div key={i} {...getLineProps({ line })} className="table-row">
