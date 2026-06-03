@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Copy, Check, ExternalLink } from "lucide-react"
+import { Copy, Check } from "lucide-react"
 import { GithubIcon } from "@/components/icons"
 import type { CodeSnippet } from "@/data/projects"
 
@@ -84,28 +84,28 @@ export function CodeSnippetDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-3xl p-0 gap-0 overflow-hidden">
         <DialogHeader className="px-6 pt-6 pb-3">
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-base">{projectTitle}</DialogTitle>
-            {repoUrl && (
-              <Button variant="outline" size="sm" asChild>
-                <a href={repoUrl} target="_blank" rel="noopener noreferrer">
-                  <GithubIcon className="h-3.5 w-3.5" />
-                  Repository
-                </a>
-              </Button>
-            )}
-          </div>
+          <DialogTitle className="text-base">{projectTitle}</DialogTitle>
         </DialogHeader>
 
         {snippets.length > 1 ? (
           <Tabs defaultValue={snippets[0].label} className="px-6 pb-6">
-            <TabsList className="mb-3">
-              {snippets.map((s) => (
-                <TabsTrigger key={s.label} value={s.label}>
-                  {s.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+            <div className="flex items-center justify-between mb-3">
+              <TabsList>
+                {snippets.map((s) => (
+                  <TabsTrigger key={s.label} value={s.label}>
+                    {s.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              {repoUrl && (
+                <Button variant="outline" size="sm" asChild>
+                  <a href={repoUrl} target="_blank" rel="noopener noreferrer">
+                    <GithubIcon className="h-3.5 w-3.5" />
+                    Repository
+                  </a>
+                </Button>
+              )}
+            </div>
             {snippets.map((s) => (
               <TabsContent key={s.label} value={s.label}>
                 <CodeBlock snippet={s} />
@@ -114,23 +114,20 @@ export function CodeSnippetDialog({
           </Tabs>
         ) : snippets[0] ? (
           <div className="px-6 pb-6">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-medium text-muted-foreground">{snippets[0].label}</span>
+              {repoUrl && (
+                <Button variant="outline" size="sm" asChild>
+                  <a href={repoUrl} target="_blank" rel="noopener noreferrer">
+                    <GithubIcon className="h-3.5 w-3.5" />
+                    Repository
+                  </a>
+                </Button>
+              )}
+            </div>
             <CodeBlock snippet={snippets[0]} />
           </div>
         ) : null}
-
-        {repoUrl && (
-          <div className="px-6 pb-4">
-            <a
-              href={repoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ExternalLink className="h-3 w-3" />
-              View full source on GitHub
-            </a>
-          </div>
-        )}
       </DialogContent>
     </Dialog>
   )
