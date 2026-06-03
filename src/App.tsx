@@ -1,3 +1,6 @@
+import { Toaster } from "sonner"
+import { TooltipProvider } from "@/components/ui/tooltip"
+import { Separator } from "@/components/ui/separator"
 import { Analytics } from "@vercel/analytics/react"
 import { Navbar } from "@/components/navbar"
 import { BackToTop } from "@/components/back-to-top"
@@ -15,20 +18,27 @@ export default function App() {
   useKeyboardShortcuts()
 
   return (
-    <>
+    <TooltipProvider delayDuration={200}>
       <Analytics />
       <Navbar />
       <main>
         <Hero />
+        <Separator />
         <About />
+        <Separator />
         <Skills />
+        <Separator />
         <Certifications />
         <Courses />
+        <Separator />
         <Experience />
+        <Separator />
         <Projects />
+        <Separator />
         <Contact />
       </main>
       <BackToTop />
-    </>
+      <Toaster richColors position="bottom-right" />
+    </TooltipProvider>
   )
 }
