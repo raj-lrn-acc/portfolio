@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { motion } from "framer-motion"
 import { projects } from "@/data/projects"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,11 +10,19 @@ import { CodePreview } from "@/components/code-preview"
 import { CodeSnippetDialog } from "@/components/code-snippet-dialog"
 import type { CodeSnippet } from "@/data/projects"
 
+const allTags = ["All", ...Array.from(new Set(projects.flatMap((p) => p.tags))).sort()]
+
 export function Projects() {
+  const [activeTag, setActiveTag] = useState("All")
   const [dialogOpen, setDialogOpen] = useState(false)
   const [activeSnippets, setActiveSnippets] = useState<CodeSnippet[]>([])
   const [activeTitle, setActiveTitle] = useState("")
   const [activeRepoUrl, setActiveRepoUrl] = useState<string | undefined>()
+
+  const filtered = useMemo(
+    () => (activeTag === "All" ? projects : projects.filter((p) => p.tags.includes(activeTag))),
+    [activeTag]
+  )
 
   const openSnippets = (title: string, snippets: CodeSnippet[], repoUrl?: string) => {
     setActiveTitle(title)
@@ -36,15 +44,38 @@ export function Projects() {
             <p className="text-sm font-medium text-muted-foreground tracking-widest uppercase mb-2">
               Projects
             </p>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">
               Things I've Built
             </h2>
           </motion.div>
 
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+            className="flex flex-wrap gap-2 mb-8"
+          >
+            {allTags.map((tag) => (
+              <button
+                key={tag}
+                onClick={() => setActiveTag(tag)}
+                className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors cursor-pointer ${
+                  activeTag === tag
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-background text-muted-foreground border-border hover:text-foreground hover:border-foreground/30"
+                }`}
+              >
+                {tag}
+              </button>
+            ))}
+          </motion.div>
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project, idx) => (
+            {filtered.map((project, idx) => (
               <motion.div
                 key={project.title}
+                layout
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}

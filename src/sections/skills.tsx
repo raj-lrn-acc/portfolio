@@ -1,6 +1,26 @@
 import { motion } from "framer-motion"
 import { skills, categoryLabels } from "@/data/skills"
-import { Badge } from "@/components/ui/badge"
+import type { Skill } from "@/data/skills"
+
+function SkillBar({ skill, index }: { skill: Skill; index: number }) {
+  return (
+    <div className="space-y-1">
+      <div className="flex justify-between text-sm">
+        <span>{skill.name}</span>
+        <span className="text-muted-foreground">{skill.level}/5</span>
+      </div>
+      <div className="h-2 rounded-full bg-muted overflow-hidden">
+        <motion.div
+          initial={{ width: 0 }}
+          whileInView={{ width: `${(skill.level / 5) * 100}%` }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: index * 0.05 }}
+          className="h-full rounded-full bg-primary"
+        />
+      </div>
+    </div>
+  )
+}
 
 const categories = ["frontend", "backend", "platforms", "tools", "ai"] as const
 
@@ -31,16 +51,14 @@ export function Skills() {
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.5, ease: "easeOut", delay: catIdx * 0.08 }}
             >
-              <h3 className="text-sm font-semibold text-muted-foreground tracking-wider uppercase mb-4">
+              <h3 className="text-sm font-semibold text-muted-foreground tracking-wider uppercase mb-5">
                 {categoryLabels[category]}
               </h3>
-              <div className="flex flex-wrap gap-2">
+              <div className="space-y-3">
                 {skills
                   .filter((s) => s.category === category)
-                  .map((skill) => (
-                    <Badge key={skill.name} variant="secondary">
-                      {skill.name}
-                    </Badge>
+                  .map((skill, i) => (
+                    <SkillBar key={skill.name} skill={skill} index={i} />
                   ))}
               </div>
             </motion.div>

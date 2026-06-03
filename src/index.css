@@ -171,6 +171,13 @@
 
 html {
   scroll-behavior: smooth;
+  transition: color-scheme 0.3s;
+}
+
+*,
+*::before,
+*::after {
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
 @media (max-width: 640px) {

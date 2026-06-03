@@ -1,38 +1,39 @@
 export interface Skill {
   name: string
   category: "frontend" | "backend" | "tools" | "platforms" | "ai"
+  level: number
 }
 
 export const skills: Skill[] = [
-  { name: "React", category: "frontend" },
-  { name: "Node.js", category: "frontend" },
-  { name: "Express", category: "frontend" },
-  { name: "Django", category: "frontend" },
-  { name: "Flask", category: "frontend" },
-  { name: "HTML/CSS/JS", category: "frontend" },
+  { name: "React", category: "frontend", level: 3 },
+  { name: "Node.js", category: "frontend", level: 3 },
+  { name: "Express", category: "frontend", level: 3 },
+  { name: "Django", category: "frontend", level: 2 },
+  { name: "Flask", category: "frontend", level: 2 },
+  { name: "HTML/CSS/JS", category: "frontend", level: 4 },
 
-  { name: "Python", category: "backend" },
-  { name: "C", category: "backend" },
-  { name: "SQLite", category: "backend" },
-  { name: "MongoDB", category: "backend" },
+  { name: "Python", category: "backend", level: 4 },
+  { name: "C", category: "backend", level: 2 },
+  { name: "SQLite", category: "backend", level: 3 },
+  { name: "MongoDB", category: "backend", level: 3 },
 
-  { name: "Linux", category: "platforms" },
-  { name: "Windows Server", category: "platforms" },
-  { name: "Active Directory", category: "platforms" },
-  { name: "AWS", category: "platforms" },
-  { name: "Windows 10/11", category: "platforms" },
-  { name: "macOS", category: "platforms" },
+  { name: "Linux", category: "platforms", level: 4 },
+  { name: "Windows Server", category: "platforms", level: 4 },
+  { name: "Active Directory", category: "platforms", level: 4 },
+  { name: "AWS", category: "platforms", level: 2 },
+  { name: "Windows 10/11", category: "platforms", level: 4 },
+  { name: "macOS", category: "platforms", level: 3 },
 
-  { name: "PowerShell", category: "tools" },
-  { name: "Zendesk", category: "tools" },
-  { name: "FreshService", category: "tools" },
-  { name: "Exchange Admin", category: "tools" },
-  { name: "Five9/CXone", category: "tools" },
-  { name: "CyberSecurity", category: "tools" },
-  { name: "GitHub", category: "tools" },
+  { name: "PowerShell", category: "tools", level: 4 },
+  { name: "Zendesk", category: "tools", level: 4 },
+  { name: "FreshService", category: "tools", level: 3 },
+  { name: "Exchange Admin", category: "tools", level: 4 },
+  { name: "Five9/CXone", category: "tools", level: 3 },
+  { name: "CyberSecurity", category: "tools", level: 2 },
+  { name: "GitHub", category: "tools", level: 3 },
 
-  { name: "ChatGPT/Gemini", category: "ai" },
-  { name: "Opencode Agents", category: "ai" },
+  { name: "ChatGPT/Gemini", category: "ai", level: 3 },
+  { name: "Opencode Agents", category: "ai", level: 2 },
 ]
 
 export const categoryLabels: Record<string, string> = {

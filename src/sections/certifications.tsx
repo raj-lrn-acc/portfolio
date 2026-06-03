@@ -1,7 +1,7 @@
 import { motion } from "framer-motion"
 import { certifications } from "@/data/certifications"
 import { Badge } from "@/components/ui/badge"
-import { BookOpen, Clock, CheckCircle } from "lucide-react"
+import { BookOpen, Clock, CheckCircle, ExternalLink } from "lucide-react"
 
 const statusConfig = {
   completed: { label: "Completed", icon: CheckCircle, class: "bg-green-500/10 text-green-600 dark:text-green-400" },
@@ -38,7 +38,7 @@ export function Certifications() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.5, ease: "easeOut", delay: idx * 0.1 }}
-                className="border rounded-xl p-6 bg-card"
+                className="border rounded-xl p-6 bg-card flex flex-col"
               >
                 <div className="flex items-start justify-between gap-4 mb-3">
                   <h3 className="font-semibold leading-snug">{cert.name}</h3>
@@ -49,7 +49,18 @@ export function Certifications() {
                 </div>
                 <p className="text-sm text-muted-foreground mb-2">{cert.issuer}</p>
                 {cert.description && (
-                  <p className="text-sm text-muted-foreground/80 leading-relaxed">{cert.description}</p>
+                  <p className="text-sm text-muted-foreground/80 leading-relaxed flex-1">{cert.description}</p>
+                )}
+                {cert.url && (
+                  <a
+                    href={cert.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mt-4"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                    Certification details
+                  </a>
                 )}
               </motion.div>
             )
