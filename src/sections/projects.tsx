@@ -87,7 +87,7 @@ export function Projects() {
                       {project.snippets && project.snippets.length > 0 ? (
                         <button
                           onClick={() => openSnippets(project.title, project.snippets!, project.repoUrl)}
-                          className="text-left p-0 border-0 bg-transparent cursor-pointer w-full min-w-0"
+                          className="text-left p-0 border-0 bg-transparent cursor-pointer w-full min-w-0 overflow-hidden"
                         >
                           <CodePreview snippet={project.snippets[0]} />
                         </button>

@@ -59,9 +59,9 @@ function CodeBlock({ snippet }: { snippet: CodeSnippet }) {
       </div>
       <div className="overflow-x-auto max-w-full">
         <pre className="p-3 sm:p-4 text-[10px] sm:text-xs leading-relaxed max-h-[50vh] sm:max-h-[60vh] font-mono !bg-[#011627] m-0 whitespace-pre w-max min-w-full">
-          <code className="!bg-transparent !p-0 hljs">
+          <code className="!bg-transparent !p-0 !block hljs">
             {lines.map((line, i) => (
-              <div key={i}>
+              <div key={i} className="overflow-hidden">
                 <span className="hidden sm:inline-block text-right pr-3 sm:pr-4 text-white/30 select-none w-6 sm:w-8">
                   {i + 1}
                 </span>
