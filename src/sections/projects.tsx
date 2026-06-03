@@ -81,6 +81,7 @@ export function Projects() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -16 }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="min-w-0"
                 >
                     <Card className="h-full flex flex-col overflow-hidden group hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
                       {project.snippets && project.snippets.length > 0 ? (

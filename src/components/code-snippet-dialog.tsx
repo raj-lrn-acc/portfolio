@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { Highlight, themes } from "prism-react-renderer"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
@@ -44,24 +43,18 @@ function CodeBlock({ snippet }: { snippet: CodeSnippet }) {
         <CopyButton code={snippet.code} />
       </div>
       <div className="overflow-x-auto max-w-full">
-        <Highlight code={snippet.code.trim()} language={snippet.language} theme={themes.nightOwl}>
-          {({ tokens, getTokenProps }) => (
-            <pre className="p-3 sm:p-4 text-[10px] sm:text-xs leading-relaxed max-h-[50vh] sm:max-h-[60vh] font-mono !bg-[#011627] m-0 whitespace-pre">
-              <code>
-                {tokens.map((line, i) => (
-                  <div key={i} className="whitespace-nowrap">
-                    <span className="hidden sm:inline-block text-right pr-3 sm:pr-4 text-[#5a7e9c] select-none w-6 sm:w-8">
-                      {i + 1}
-                    </span>
-                    {line.map((token, key) => (
-                      <span key={key} {...getTokenProps({ token })} />
-                    ))}
-                  </div>
-                ))}
-              </code>
-            </pre>
-          )}
-        </Highlight>
+        <pre className="p-3 sm:p-4 text-[10px] sm:text-xs leading-relaxed max-h-[50vh] sm:max-h-[60vh] font-mono !bg-[#011627] m-0 whitespace-pre w-max min-w-full text-white/70">
+          <code>
+            {snippet.code.trim().split("\n").map((line, i) => (
+              <div key={i}>
+                <span className="hidden sm:inline-block text-right pr-3 sm:pr-4 text-white/30 select-none w-6 sm:w-8">
+                  {i + 1}
+                </span>
+                {line}
+              </div>
+            ))}
+          </code>
+        </pre>
       </div>
     </div>
   )
