@@ -90,7 +90,7 @@ export function CodeSnippetDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl p-0 gap-0 mx-4 sm:mx-auto rounded-xl">
+      <DialogContent className="sm:max-w-3xl p-0 gap-0 rounded-xl">
         <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-2 sm:pb-3">
           <DialogTitle className="text-sm sm:text-base">{projectTitle}</DialogTitle>
         </DialogHeader>
