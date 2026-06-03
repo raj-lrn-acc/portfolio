@@ -57,7 +57,7 @@ function CodeBlock({ snippet }: { snippet: CodeSnippet }) {
         </div>
         <CopyButton code={snippet.code} />
       </div>
-      <div className="overflow-auto max-w-full max-h-[50vh] sm:max-h-[60vh]">
+      <div className="overflow-auto max-w-full max-h-[50vh] sm:max-h-[60vh] code-scrollbar">
         <pre className="p-3 sm:p-4 text-[10px] sm:text-xs leading-relaxed font-mono !bg-[#011627] m-0 whitespace-pre w-max min-w-full">
           <code className="!bg-transparent !p-0 !block hljs">
             {lines.map((line, i) => (
