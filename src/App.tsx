@@ -9,7 +9,6 @@ import { Certifications } from "@/sections/certifications"
 import { Courses } from "@/sections/courses"
 import { Experience } from "@/sections/experience"
 import { Projects } from "@/sections/projects"
-import { GitHubActivity } from "@/sections/github-activity"
 import { Contact } from "@/sections/contact"
 
 export default function App() {
@@ -27,7 +26,6 @@ export default function App() {
         <Courses />
         <Experience />
         <Projects />
-        <GitHubActivity />
         <Contact />
       </main>
       <BackToTop />
