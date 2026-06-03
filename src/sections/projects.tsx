@@ -71,18 +71,17 @@ export function Projects() {
             ))}
           </motion.div>
 
-          <div className="relative">
-            <AnimatePresence mode="popLayout">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filtered.map((project) => (
-                  <motion.div
-                    key={project.title}
-                    layout
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.25, ease: "easeOut" }}
-                  >
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <AnimatePresence>
+              {filtered.map((project) => (
+                <motion.div
+                  key={project.title}
+                  layout
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -16 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                >
                     <Card className="h-full flex flex-col overflow-hidden group hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
                       {project.snippets && project.snippets.length > 0 ? (
                         <button
@@ -160,7 +159,6 @@ export function Projects() {
                     </Card>
                   </motion.div>
                 ))}
-              </div>
             </AnimatePresence>
           </div>
         </div>
