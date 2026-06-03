@@ -58,7 +58,7 @@ export function Contact() {
             className="flex md:flex-col gap-4 justify-center"
           >
             <Button variant="outline" size="icon" asChild>
-              <a href="mailto:rajveercanada2@gmail.com" aria-label="Email">
+              <a href="#" onClick={(e) => { e.preventDefault(); window.location.href = 'mailto:' + atob('cmFqdmVlcmNhbmFkYTJAZ21haWwuY29t') }} aria-label="Email">
                 <Mail className="h-5 w-5" />
               </a>
             </Button>

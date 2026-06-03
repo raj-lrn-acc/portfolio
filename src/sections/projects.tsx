@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Code, ExternalLink } from "lucide-react"
 import { GithubIcon } from "@/components/icons"
 import { CodePreview } from "@/components/code-preview"
+import { RepoStats } from "@/components/repo-stats"
 import { CodeSnippetDialog } from "@/components/code-snippet-dialog"
 import type { CodeSnippet } from "@/data/projects"
 
@@ -127,7 +128,8 @@ export function Projects() {
                       ))}
                     </div>
                   </CardContent>
-                  <CardFooter className="gap-2">
+                  <CardFooter className="gap-2 flex-wrap">
+                    <RepoStats repoUrl={project.repoUrl} />
                     {project.liveUrl && (
                       <Button variant="outline" size="sm" asChild>
                         <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
