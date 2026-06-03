@@ -45,19 +45,17 @@ function CodeBlock({ snippet }: { snippet: CodeSnippet }) {
       </div>
       <div className="overflow-x-auto max-w-full">
         <Highlight code={snippet.code.trim()} language={snippet.language} theme={themes.nightOwl}>
-          {({ tokens, getLineProps, getTokenProps }) => (
-            <pre className="p-3 sm:p-4 text-[10px] sm:text-xs leading-relaxed max-h-[50vh] sm:max-h-[60vh] font-mono !bg-[#011627] m-0 whitespace-pre min-w-0">
+          {({ tokens, getTokenProps }) => (
+            <pre className="p-3 sm:p-4 text-[10px] sm:text-xs leading-relaxed max-h-[50vh] sm:max-h-[60vh] font-mono !bg-[#011627] m-0 whitespace-pre">
               <code>
                 {tokens.map((line, i) => (
-                  <div key={i} {...getLineProps({ line })} className="flex">
-                    <span className="hidden sm:inline-block text-right pr-3 sm:pr-4 text-[#5a7e9c] select-none w-6 sm:w-8 shrink-0">
+                  <div key={i} className="whitespace-nowrap">
+                    <span className="hidden sm:inline-block text-right pr-3 sm:pr-4 text-[#5a7e9c] select-none w-6 sm:w-8">
                       {i + 1}
                     </span>
-                    <span className="flex-1 min-w-0">
-                      {line.map((token, key) => (
-                        <span key={key} {...getTokenProps({ token })} />
-                      ))}
-                    </span>
+                    {line.map((token, key) => (
+                      <span key={key} {...getTokenProps({ token })} />
+                    ))}
                   </div>
                 ))}
               </code>
