@@ -11,11 +11,11 @@ export function CodePreview({ snippet }: { snippet: CodeSnippet }) {
     <div className="relative cursor-pointer group">
       <Highlight code={previewCode} language={snippet.language} theme={themes.nightOwl}>
         {({ tokens, getLineProps, getTokenProps }) => (
-          <pre className="p-4 text-xs leading-relaxed overflow-hidden font-mono !bg-[#011627] m-0 select-none">
+          <pre className="p-3 sm:p-4 text-[10px] sm:text-xs leading-relaxed overflow-x-auto font-mono !bg-[#011627] m-0 select-none whitespace-pre">
             <code>
               {tokens.map((line, i) => (
                 <div key={i} {...getLineProps({ line })} className="table-row">
-                  <span className="table-cell text-right pr-4 text-[#5a7e9c] select-none w-[1%]">
+                  <span className="hidden sm:table-cell text-right pr-3 sm:pr-4 text-[#5a7e9c] select-none w-[1%]">
                     {i + 1}
                   </span>
                   <span className="table-cell">

@@ -20,12 +20,12 @@ function CopyButton({ code }: { code: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="flex items-center gap-1 text-xs text-white/60 hover:text-white transition-colors"
+      className="flex items-center gap-1 text-[10px] sm:text-xs text-white/60 hover:text-white transition-colors shrink-0"
     >
       {copied ? (
-        <><Check className="h-3.5 w-3.5" /> Copied</>
+        <><Check className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Copied</>
       ) : (
-        <><Copy className="h-3.5 w-3.5" /> Copy</>
+        <><Copy className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Copy</>
       )}
     </button>
   )
@@ -34,10 +34,10 @@ function CopyButton({ code }: { code: string }) {
 function CodeBlock({ snippet }: { snippet: CodeSnippet }) {
   return (
     <div className="relative rounded-lg overflow-hidden border">
-      <div className="flex items-center justify-between px-4 py-2 bg-[#011627] border-b border-white/10">
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-white/70 font-mono">{snippet.label}</span>
-          <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-5">
+      <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-[#011627] border-b border-white/10 gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-[10px] sm:text-xs text-white/70 font-mono truncate">{snippet.label}</span>
+          <Badge variant="secondary" className="text-[9px] sm:text-[10px] px-1.5 py-0 h-4 sm:h-5 shrink-0">
             {snippet.language}
           </Badge>
         </div>
@@ -45,11 +45,11 @@ function CodeBlock({ snippet }: { snippet: CodeSnippet }) {
       </div>
       <Highlight code={snippet.code.trim()} language={snippet.language} theme={themes.nightOwl}>
         {({ tokens, getLineProps, getTokenProps }) => (
-          <pre className="p-4 text-xs leading-relaxed overflow-auto max-h-[60vh] font-mono !bg-[#011627] m-0">
+          <pre className="p-3 sm:p-4 text-[10px] sm:text-xs leading-relaxed overflow-auto max-h-[50vh] sm:max-h-[60vh] font-mono !bg-[#011627] m-0 whitespace-pre">
             <code>
               {tokens.map((line, i) => (
                 <div key={i} {...getLineProps({ line })} className="table-row">
-                  <span className="table-cell text-right pr-4 text-[#5a7e9c] select-none w-[1%] min-w-[2.5rem]">
+                  <span className="hidden sm:table-cell text-right pr-3 sm:pr-4 text-[#5a7e9c] select-none w-[1%] min-w-[2rem] sm:min-w-[2.5rem]">
                     {i + 1}
                   </span>
                   <span className="table-cell">
@@ -82,23 +82,23 @@ export function CodeSnippetDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl p-0 gap-0 overflow-hidden">
-        <DialogHeader className="px-6 pt-6 pb-3">
-          <DialogTitle className="text-base">{projectTitle}</DialogTitle>
+      <DialogContent className="sm:max-w-3xl p-0 gap-0 overflow-hidden mx-4 sm:mx-auto rounded-xl">
+        <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-2 sm:pb-3">
+          <DialogTitle className="text-sm sm:text-base">{projectTitle}</DialogTitle>
         </DialogHeader>
 
         {snippets.length > 1 ? (
-          <Tabs defaultValue={snippets[0].label} className="px-6 pb-6">
-            <div className="flex items-center justify-between mb-3">
-              <TabsList>
+          <Tabs defaultValue={snippets[0].label} className="px-4 sm:px-6 pb-4 sm:pb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+              <TabsList className="self-start overflow-x-auto max-w-full">
                 {snippets.map((s) => (
-                  <TabsTrigger key={s.label} value={s.label}>
+                  <TabsTrigger key={s.label} value={s.label} className="text-[11px] sm:text-sm whitespace-nowrap">
                     {s.label}
                   </TabsTrigger>
                 ))}
               </TabsList>
               {repoUrl && (
-                <Button variant="outline" size="sm" asChild>
+                <Button variant="outline" size="sm" asChild className="self-end sm:self-auto">
                   <a href={repoUrl} target="_blank" rel="noopener noreferrer">
                     <GithubIcon className="h-3.5 w-3.5" />
                     Repository
@@ -113,11 +113,11 @@ export function CodeSnippetDialog({
             ))}
           </Tabs>
         ) : snippets[0] ? (
-          <div className="px-6 pb-6">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium text-muted-foreground">{snippets[0].label}</span>
+          <div className="px-4 sm:px-6 pb-4 sm:pb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+              <span className="text-xs sm:text-sm font-medium text-muted-foreground">{snippets[0].label}</span>
               {repoUrl && (
-                <Button variant="outline" size="sm" asChild>
+                <Button variant="outline" size="sm" asChild className="self-start sm:self-auto">
                   <a href={repoUrl} target="_blank" rel="noopener noreferrer">
                     <GithubIcon className="h-3.5 w-3.5" />
                     Repository
