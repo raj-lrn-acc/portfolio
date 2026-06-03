@@ -43,26 +43,28 @@ function CodeBlock({ snippet }: { snippet: CodeSnippet }) {
         </div>
         <CopyButton code={snippet.code} />
       </div>
-      <Highlight code={snippet.code.trim()} language={snippet.language} theme={themes.nightOwl}>
-        {({ tokens, getLineProps, getTokenProps }) => (
-          <pre className="p-3 sm:p-4 text-[10px] sm:text-xs leading-relaxed overflow-auto max-w-full max-h-[50vh] sm:max-h-[60vh] font-mono !bg-[#011627] m-0 whitespace-pre">
-            <code>
-              {tokens.map((line, i) => (
-                <div key={i} {...getLineProps({ line })} className="table-row">
-                  <span className="hidden sm:table-cell text-right pr-3 sm:pr-4 text-[#5a7e9c] select-none w-[1%] min-w-[2rem] sm:min-w-[2.5rem]">
-                    {i + 1}
-                  </span>
-                  <span className="table-cell">
-                    {line.map((token, key) => (
-                      <span key={key} {...getTokenProps({ token })} />
-                    ))}
-                  </span>
-                </div>
-              ))}
-            </code>
-          </pre>
-        )}
-      </Highlight>
+      <div className="overflow-x-auto max-w-full">
+        <Highlight code={snippet.code.trim()} language={snippet.language} theme={themes.nightOwl}>
+          {({ tokens, getLineProps, getTokenProps }) => (
+            <pre className="p-3 sm:p-4 text-[10px] sm:text-xs leading-relaxed max-h-[50vh] sm:max-h-[60vh] font-mono !bg-[#011627] m-0 whitespace-pre min-w-0">
+              <code>
+                {tokens.map((line, i) => (
+                  <div key={i} {...getLineProps({ line })} className="flex">
+                    <span className="hidden sm:inline-block text-right pr-3 sm:pr-4 text-[#5a7e9c] select-none w-6 sm:w-8 shrink-0">
+                      {i + 1}
+                    </span>
+                    <span className="flex-1 min-w-0">
+                      {line.map((token, key) => (
+                        <span key={key} {...getTokenProps({ token })} />
+                      ))}
+                    </span>
+                  </div>
+                ))}
+              </code>
+            </pre>
+          )}
+        </Highlight>
+      </div>
     </div>
   )
 }
@@ -82,13 +84,13 @@ export function CodeSnippetDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl p-0 gap-0 overflow-hidden mx-4 sm:mx-auto rounded-xl">
+      <DialogContent className="sm:max-w-3xl p-0 gap-0 mx-4 sm:mx-auto rounded-xl">
         <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-2 sm:pb-3">
           <DialogTitle className="text-sm sm:text-base">{projectTitle}</DialogTitle>
         </DialogHeader>
 
         {snippets.length > 1 ? (
-          <Tabs defaultValue={snippets[0].label} className="px-4 sm:px-6 pb-4 sm:pb-6">
+          <Tabs defaultValue={snippets[0].label} className="px-4 sm:px-6 pb-4 sm:pb-6 max-w-full">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
               <TabsList className="self-start overflow-x-auto max-w-full">
                 {snippets.map((s) => (
