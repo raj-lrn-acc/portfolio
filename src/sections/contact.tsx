@@ -34,7 +34,7 @@ export function Contact() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            action="https://formspree.io/f/REPLACE_ME"
+            action="https://formspree.io/f/xqeozbpy"
             method="POST"
             className="space-y-4"
           >
