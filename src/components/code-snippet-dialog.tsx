@@ -1,4 +1,6 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
+import hljs from "highlight.js"
+import "highlight.js/styles/atom-one-dark.css"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
@@ -31,6 +33,19 @@ function CopyButton({ code }: { code: string }) {
 }
 
 function CodeBlock({ snippet }: { snippet: CodeSnippet }) {
+  const lines = useMemo(() => {
+    try {
+      const lang = snippet.language === "jsx" ? "javascript" : snippet.language
+      const result = hljs.highlight(snippet.code, { language: lang })
+      return result.value.split("\n")
+    } catch {
+      return snippet.code
+        .trim()
+        .split("\n")
+        .map((l) => l.replace(/</g, "&lt;").replace(/>/g, "&gt;"))
+    }
+  }, [snippet])
+
   return (
     <div className="relative rounded-lg overflow-hidden border max-w-full">
       <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-[#011627] border-b border-white/10 gap-2">
@@ -43,14 +58,14 @@ function CodeBlock({ snippet }: { snippet: CodeSnippet }) {
         <CopyButton code={snippet.code} />
       </div>
       <div className="overflow-x-auto max-w-full">
-        <pre className="p-3 sm:p-4 text-[10px] sm:text-xs leading-relaxed max-h-[50vh] sm:max-h-[60vh] font-mono !bg-[#011627] m-0 whitespace-pre w-max min-w-full text-white/70">
-          <code>
-            {snippet.code.trim().split("\n").map((line, i) => (
+        <pre className="p-3 sm:p-4 text-[10px] sm:text-xs leading-relaxed max-h-[50vh] sm:max-h-[60vh] font-mono !bg-[#011627] m-0 whitespace-pre w-max min-w-full">
+          <code className="!bg-transparent !p-0 hljs">
+            {lines.map((line, i) => (
               <div key={i}>
                 <span className="hidden sm:inline-block text-right pr-3 sm:pr-4 text-white/30 select-none w-6 sm:w-8">
                   {i + 1}
                 </span>
-                {line}
+                <span dangerouslySetInnerHTML={{ __html: line || " " }} />
               </div>
             ))}
           </code>
