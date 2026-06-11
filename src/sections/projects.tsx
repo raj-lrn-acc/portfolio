@@ -14,24 +14,18 @@ const allTags = ["All", ...Array.from(new Set(projects.flatMap((p) => p.tags))).
 
 export function Projects() {
   const [activeTag, setActiveTag] = useState("All")
-  const [selectedIndex, setSelectedIndex] = useState(0)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [activeSnippets, setActiveSnippets] = useState<CodeSnippet[]>([])
   const [activeTitle, setActiveTitle] = useState("")
   const [activeRepoUrl, setActiveRepoUrl] = useState<string | undefined>()
 
   const filtered = activeTag === "All" ? projects : projects.filter((p) => p.tags.includes(activeTag))
-  const featured = filtered[selectedIndex]
 
   const openSnippets = (title: string, snippets: CodeSnippet[], repoUrl?: string) => {
     setActiveTitle(title)
     setActiveSnippets(snippets)
     setActiveRepoUrl(repoUrl)
     setDialogOpen(true)
-  }
-
-  const selectProject = (i: number) => {
-    setSelectedIndex(i)
   }
 
   return (
@@ -60,10 +54,9 @@ export function Projects() {
             className="flex flex-wrap items-center gap-2 mb-8"
           >
             {allTags.map((tag) => (
-              <motion.button
+              <button
                 key={tag}
-                onClick={() => { setActiveTag(tag); setSelectedIndex(0) }}
-                layout
+                onClick={() => { setActiveTag(tag) }}
                 className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors cursor-pointer ${
                   activeTag === tag
                     ? "bg-primary text-primary-foreground border-primary"
@@ -76,7 +69,7 @@ export function Projects() {
                     {projects.filter((p) => p.tags.includes(tag)).length}
                   </span>
                 )}
-              </motion.button>
+              </button>
             ))}
             <span className="text-[11px] text-muted-foreground ml-auto">
               {filtered.length} of {projects.length} projects
@@ -84,125 +77,112 @@ export function Projects() {
           </motion.div>
 
           {filtered.length > 0 ? (
-            <div className="space-y-8">
-              <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTag}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+              >
                 <motion.div
-                  key={selectedIndex}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
+                  className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+                  variants={{
+                    hidden: {},
+                    visible: { transition: { staggerChildren: 0.04 } }
+                  }}
+                  initial="hidden"
+                  animate="visible"
                 >
-                  <Card className="overflow-hidden">
-                    {featured.snippets && featured.snippets.length > 0 ? (
-                      <button
-                        onClick={() => openSnippets(featured.title, featured.snippets!, featured.repoUrl)}
-                        className="text-left p-0 border-0 bg-transparent cursor-pointer w-full min-w-0 overflow-hidden"
-                      >
-                        <CodePreview snippet={featured.snippets[0]} />
-                      </button>
-                    ) : (
-                      <div className="aspect-video bg-gradient-to-br from-primary/10 via-muted to-primary/5 flex items-center justify-center">
-                        <div className="text-center p-4">
-                          <div className="w-10 h-10 mx-auto mb-2 rounded-lg border bg-background/50 flex items-center justify-center">
-                            <svg className="w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0 0 21 18V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v12a2.25 2.25 0 0 0 2.25 2.25Z" />
-                            </svg>
-                          </div>
-                          <p className="text-xs font-medium text-muted-foreground">{featured.title}</p>
-                        </div>
-                      </div>
-                    )}
-                    <CardHeader>
-                      <div className="flex items-start justify-between gap-2">
-                        <CardTitle className="text-lg">{featured.title}</CardTitle>
-                        {featured.snippets && featured.snippets.length > 0 && (
+                  {filtered.map((project) => (
+                    <motion.div
+                      key={project.title}
+                      variants={{
+                        hidden: { opacity: 0, y: 16 },
+                        visible: { opacity: 1, y: 0 }
+                      }}
+                      transition={{ duration: 0.25, ease: "easeOut" }}
+                    >
+                      <Card className="h-full flex flex-col overflow-hidden group hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
+                        {project.snippets && project.snippets.length > 0 ? (
                           <button
-                            onClick={() => openSnippets(featured.title, featured.snippets!, featured.repoUrl)}
-                            className="shrink-0 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                            title="View code"
+                            onClick={() => openSnippets(project.title, project.snippets!, project.repoUrl)}
+                            className="text-left p-0 border-0 bg-transparent cursor-pointer w-full min-w-0 overflow-hidden"
                           >
-                            <Code className="h-4 w-4" />
+                            <CodePreview snippet={project.snippets[0]} />
                           </button>
+                        ) : (
+                          <div className="aspect-video bg-gradient-to-br from-primary/10 via-muted to-primary/5 flex items-center justify-center">
+                            <div className="text-center p-4">
+                              <div className="w-10 h-10 mx-auto mb-2 rounded-lg border bg-background/50 flex items-center justify-center">
+                                <svg className="w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0 0 21 18V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v12a2.25 2.25 0 0 0 2.25 2.25Z" />
+                                </svg>
+                              </div>
+                              <p className="text-xs font-medium text-muted-foreground">{project.title}</p>
+                            </div>
+                          </div>
                         )}
-                      </div>
-                    </CardHeader>
-                    <CardContent className="flex-1">
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {featured.description}
-                      </p>
-                      <div className="flex flex-wrap gap-1.5 mt-4">
-                        {featured.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardContent>
-                    <CardFooter className="gap-2 flex-wrap">
-                      {featured.liveUrl && (
-                        <Button variant="outline" size="sm" asChild>
-                          <a href={featured.liveUrl} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="h-3.5 w-3.5" />
-                            Live
-                          </a>
-                        </Button>
-                      )}
-                      {featured.repoUrl && (
-                        <Button variant="outline" size="sm" asChild>
-                          <a href={featured.repoUrl} target="_blank" rel="noopener noreferrer">
-                            <GithubIcon className="h-3.5 w-3.5" />
-                            Code
-                          </a>
-                        </Button>
-                      )}
-                      {featured.snippets && featured.snippets.length > 0 && (
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => openSnippets(featured.title, featured.snippets!, featured.repoUrl)}
-                        >
-                          <Code className="h-3.5 w-3.5" />
-                          View Code
-                        </Button>
-                      )}
-                    </CardFooter>
-                  </Card>
+                        <CardHeader>
+                          <div className="flex items-start justify-between gap-2">
+                            <CardTitle className="text-lg">{project.title}</CardTitle>
+                            {project.snippets && project.snippets.length > 0 && (
+                              <button
+                                onClick={() => openSnippets(project.title, project.snippets!, project.repoUrl)}
+                                className="shrink-0 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                                title="View code"
+                              >
+                                <Code className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
+                        </CardHeader>
+                        <CardContent className="flex-1">
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {project.description}
+                          </p>
+                          <div className="flex flex-wrap gap-1.5 mt-4">
+                            {project.tags.map((tag) => (
+                              <Badge key={tag} variant="secondary" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                        </CardContent>
+                        <CardFooter className="gap-2 flex-wrap">
+                          {project.liveUrl && (
+                            <Button variant="outline" size="sm" asChild>
+                              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                                <ExternalLink className="h-3.5 w-3.5" />
+                                Live
+                              </a>
+                            </Button>
+                          )}
+                          {project.repoUrl && (
+                            <Button variant="outline" size="sm" asChild>
+                              <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
+                                <GithubIcon className="h-3.5 w-3.5" />
+                                Code
+                              </a>
+                            </Button>
+                          )}
+                          {project.snippets && project.snippets.length > 0 && (
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => openSnippets(project.title, project.snippets!, project.repoUrl)}
+                            >
+                              <Code className="h-3.5 w-3.5" />
+                              View Code
+                            </Button>
+                          )}
+                        </CardFooter>
+                      </Card>
+                    </motion.div>
+                  ))}
                 </motion.div>
-              </AnimatePresence>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                {filtered.map((project, i) => (
-                  <button
-                    key={project.title}
-                    onClick={() => selectProject(i)}
-                    className={`text-left rounded-xl border p-3 transition-all duration-200 cursor-pointer hover:border-foreground/30 ${
-                      i === selectedIndex
-                        ? "border-primary ring-1 ring-primary bg-primary/5"
-                        : "border-border bg-background"
-                    }`}
-                  >
-                    {project.snippets && project.snippets.length > 0 ? (
-                      <div className="h-12 rounded-lg overflow-hidden mb-2 opacity-70">
-                        <CodePreview snippet={project.snippets[0]} />
-                      </div>
-                    ) : (
-                      <div className="h-12 rounded-lg mb-2 bg-muted/50 flex items-center justify-center">
-                        <Code className="h-4 w-4 text-muted-foreground/50" />
-                      </div>
-                    )}
-                    <p className="text-xs font-medium truncate">{project.title}</p>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {project.tags.slice(0, 2).map((tag) => (
-                        <span key={tag} className="text-[10px] text-muted-foreground">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
+              </motion.div>
+            </AnimatePresence>
           ) : (
             <div className="text-center py-16">
               <p className="text-muted-foreground">No projects match this filter.</p>
