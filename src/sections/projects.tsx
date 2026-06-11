@@ -54,12 +54,13 @@ export function Projects() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
-            className="flex flex-wrap gap-2 mb-8"
+            className="flex flex-wrap items-center gap-2 mb-8"
           >
             {allTags.map((tag) => (
-              <button
+              <motion.button
                 key={tag}
                 onClick={() => setActiveTag(tag)}
+                layout
                 className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors cursor-pointer ${
                   activeTag === tag
                     ? "bg-primary text-primary-foreground border-primary"
@@ -67,20 +68,27 @@ export function Projects() {
                 }`}
               >
                 {tag}
-              </button>
+                {tag !== "All" && (
+                  <span className="ml-1.5 text-[10px] opacity-60">
+                    {projects.filter((p) => p.tags.includes(tag)).length}
+                  </span>
+                )}
+              </motion.button>
             ))}
+            <span className="text-[11px] text-muted-foreground ml-auto">
+              {filtered.length} of {projects.length} projects
+            </span>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <AnimatePresence>
-              {filtered.map((project) => (
+          <motion.div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" layout>
+            <AnimatePresence mode="popLayout">
+              {filtered.map((project, i) => (
                 <motion.div
                   key={project.title}
-                  layout
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -16 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -20 }}
+                  transition={{ duration: 0.3, ease: "easeOut", delay: i * 0.05 }}
                   className="min-w-0"
                 >
                     <Card className="h-full flex flex-col overflow-hidden group hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
@@ -161,7 +169,7 @@ export function Projects() {
                   </motion.div>
                 ))}
             </AnimatePresence>
-          </div>
+          </motion.div>
         </div>
       </section>
 
