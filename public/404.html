@@ -17,7 +17,11 @@
         text-align: center;
         padding: 2rem;
       }
-      .dark body { background: #111; color: #fafafa; }
+      @media (prefers-color-scheme: dark) {
+        body { background: #111; color: #fafafa; }
+        .link { border-color: #333; }
+        .link:hover { background: #1a1a1a; }
+      }
       a { color: inherit; }
       h1 { font-size: 5rem; font-weight: 800; line-height: 1; }
       p { margin-top: 1rem; color: #666; }

@@ -6,12 +6,12 @@ export interface Skill {
 
 export const skills: Skill[] = [
   { name: "React", category: "frontend", level: 3 },
-  { name: "Node.js", category: "frontend", level: 3 },
-  { name: "Express", category: "frontend", level: 3 },
-  { name: "Django", category: "frontend", level: 2 },
-  { name: "Flask", category: "frontend", level: 2 },
   { name: "HTML/CSS/JS", category: "frontend", level: 4 },
 
+  { name: "Node.js", category: "backend", level: 3 },
+  { name: "Express", category: "backend", level: 3 },
+  { name: "Django", category: "backend", level: 2 },
+  { name: "Flask", category: "backend", level: 2 },
   { name: "Python", category: "backend", level: 4 },
   { name: "C", category: "backend", level: 2 },
   { name: "SQLite", category: "backend", level: 3 },

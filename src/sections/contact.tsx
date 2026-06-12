@@ -1,15 +1,21 @@
+import { useState } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
-import { Mail, Send } from "lucide-react"
+import { Mail, Send, Loader2 } from "lucide-react"
 import { GithubIcon, LinkedinIcon } from "@/components/icons"
 import { toast } from "sonner"
 
 export function Contact() {
+  const [submitting, setSubmitting] = useState(false)
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
+
     const form = e.currentTarget
     const formData = new FormData(form)
 
@@ -29,6 +35,7 @@ export function Contact() {
       .catch(() => {
         toast.error("Network error.", { description: "Check your connection and try again." })
       })
+      .finally(() => setSubmitting(false))
   }
 
   return (
@@ -70,9 +77,9 @@ export function Contact() {
             </div>
             <Input name="subject" placeholder="Subject" required />
             <Textarea name="message" placeholder="Message" rows={5} required />
-            <Button type="submit" className="w-full">
-              <Send className="h-4 w-4" />
-              Send Message
+            <Button type="submit" disabled={submitting} className="w-full">
+              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              {submitting ? "Sending..." : "Send Message"}
             </Button>
           </motion.form>
 
@@ -86,7 +93,7 @@ export function Contact() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="outline" size="icon" asChild>
-                  <a href="#" onClick={(e) => { e.preventDefault(); window.location.href = 'mailto:' + atob('cmFqdmVlcmNhbmFkYTJAZ21haWwuY29t') }} aria-label="Email">
+                  <a href="mailto:rajveercanada2@gmail.com" aria-label="Email">
                     <Mail className="h-5 w-5" />
                   </a>
                 </Button>

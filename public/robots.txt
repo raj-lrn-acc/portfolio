@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://portfolioxrajveer.vercel.app/sitemap.xml

@@ -6,7 +6,7 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip
 
 export function Hero() {
   return (
-    <section className="min-h-screen flex flex-col justify-center items-center px-6 relative">
+    <section id="home" className="min-h-screen flex flex-col justify-center items-center px-6 relative">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
