@@ -1,6 +1,4 @@
-import { useState, useMemo } from "react"
-import hljs from "highlight.js"
-import "highlight.js/styles/atom-one-dark.css"
+import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
@@ -33,17 +31,25 @@ function CopyButton({ code }: { code: string }) {
 }
 
 function CodeBlock({ snippet }: { snippet: CodeSnippet }) {
-  const lines = useMemo(() => {
-    try {
+  const [lines, setLines] = useState<string[]>(() =>
+    snippet.code.trim().split("\n").map((l) => l.replace(/</g, "&lt;").replace(/>/g, "&gt;"))
+  )
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      const hljs = await import("highlight.js")
+      await import("highlight.js/styles/atom-one-dark.css")
+      if (cancelled) return
       const lang = snippet.language === "jsx" ? "javascript" : snippet.language
-      const result = hljs.highlight(snippet.code, { language: lang })
-      return result.value.split("\n")
-    } catch {
-      return snippet.code
-        .trim()
-        .split("\n")
-        .map((l) => l.replace(/</g, "&lt;").replace(/>/g, "&gt;"))
-    }
+      try {
+        const result = hljs.default.highlight(snippet.code, { language: lang })
+        if (!cancelled) setLines(result.value.split("\n"))
+      } catch {
+        // fallback already set
+      }
+    })()
+    return () => { cancelled = true }
   }, [snippet])
 
   return (

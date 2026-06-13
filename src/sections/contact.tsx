@@ -123,17 +123,6 @@ export function Contact() {
           </motion.div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          className="mt-16 text-center"
-        >
-          <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Rajveer Singh. All rights reserved.
-          </p>
-        </motion.div>
       </div>
     </section>
   )

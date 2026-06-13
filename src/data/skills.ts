@@ -37,7 +37,7 @@ export const skills: Skill[] = [
 ]
 
 export const categoryLabels: Record<string, string> = {
-  frontend: "Frontend & Backend",
+  frontend: "Frontend",
   backend: "Languages & Databases",
   platforms: "Platforms & Infrastructure",
   tools: "Tools & Security",

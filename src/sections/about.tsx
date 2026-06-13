@@ -28,7 +28,7 @@ export function About() {
             className="flex justify-center md:block"
           >
             <Avatar className="w-32 h-32 md:w-40 md:h-40 border-2">
-              <AvatarImage src="/profile.jpg" alt="Rajveer Singh" className="object-cover" />
+              <AvatarImage src="/profile.jpg" alt="Rajveer Singh" className="object-cover" loading="lazy" />
               <AvatarFallback className="text-3xl bg-muted">
                 RS
               </AvatarFallback>

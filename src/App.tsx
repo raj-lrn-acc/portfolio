@@ -1,18 +1,26 @@
+import { lazy, Suspense } from "react"
 import { Toaster } from "sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Separator } from "@/components/ui/separator"
 import { Analytics } from "@vercel/analytics/react"
 import { Navbar } from "@/components/navbar"
 import { BackToTop } from "@/components/back-to-top"
+import { Footer } from "@/components/footer"
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts"
 import { Hero } from "@/sections/hero"
-import { About } from "@/sections/about"
-import { Skills } from "@/sections/skills"
-import { Certifications } from "@/sections/certifications"
-import { Courses } from "@/sections/courses"
-import { Experience } from "@/sections/experience"
-import { Projects } from "@/sections/projects"
-import { Contact } from "@/sections/contact"
+
+const About = lazy(() => import("@/sections/about").then((m) => ({ default: m.About })))
+const Skills = lazy(() => import("@/sections/skills").then((m) => ({ default: m.Skills })))
+const Certifications = lazy(() => import("@/sections/certifications").then((m) => ({ default: m.Certifications })))
+const Courses = lazy(() => import("@/sections/courses").then((m) => ({ default: m.Courses })))
+const Experience = lazy(() => import("@/sections/experience").then((m) => ({ default: m.Experience })))
+const Projects = lazy(() => import("@/sections/projects").then((m) => ({ default: m.Projects })))
+const Contact = lazy(() => import("@/sections/contact").then((m) => ({ default: m.Contact })))
+const Services = lazy(() => import("@/sections/services").then((m) => ({ default: m.Services })))
+
+function Lazy({ children }: { children: React.ReactNode }) {
+  return <Suspense fallback={null}>{children}</Suspense>
+}
 
 export default function App() {
   useKeyboardShortcuts()
@@ -24,20 +32,23 @@ export default function App() {
       <main>
         <Hero />
         <Separator />
-        <About />
+        <Lazy><About /></Lazy>
         <Separator />
-        <Skills />
+        <Lazy><Services /></Lazy>
         <Separator />
-        <Certifications />
-        <Courses />
+        <Lazy><Skills /></Lazy>
         <Separator />
-        <Experience />
+        <Lazy><Certifications /></Lazy>
+        <Lazy><Courses /></Lazy>
         <Separator />
-        <Projects />
+        <Lazy><Experience /></Lazy>
         <Separator />
-        <Contact />
+        <Lazy><Projects /></Lazy>
+        <Separator />
+        <Lazy><Contact /></Lazy>
       </main>
       <BackToTop />
+      <Footer />
       <Toaster richColors position="bottom-right" />
     </TooltipProvider>
   )

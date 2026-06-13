@@ -7,6 +7,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/s
 
 const navLinks = [
   { href: "#about", label: "About" },
+  { href: "#services", label: "Services" },
   { href: "#skills", label: "Skills" },
   { href: "#certifications", label: "Certs" },
   { href: "#courses", label: "Courses" },
@@ -17,11 +18,29 @@ const navLinks = [
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
+  const [activeSection, setActiveSection] = useState("")
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
+
+    const sections = navLinks.map((l) => document.getElementById(l.href.slice(1))).filter(Boolean) as HTMLElement[]
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id)
+          }
+        }
+      },
+      { rootMargin: "-40% 0px -55% 0px" }
+    )
+    sections.forEach((s) => observer.observe(s))
+
     window.addEventListener("scroll", onScroll)
-    return () => window.removeEventListener("scroll", onScroll)
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      observer.disconnect()
+    }
   }, [])
 
   return (
@@ -43,7 +62,13 @@ export function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              aria-current={activeSection === link.href.slice(1) ? "true" : undefined}
+              className={cn(
+                "text-sm transition-colors",
+                activeSection === link.href.slice(1)
+                  ? "text-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
             >
               {link.label}
             </a>
@@ -66,7 +91,13 @@ export function Navbar() {
                   <a
                     key={link.href}
                     href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    aria-current={activeSection === link.href.slice(1) ? "true" : undefined}
+                    className={cn(
+                      "text-sm transition-colors",
+                      activeSection === link.href.slice(1)
+                        ? "text-foreground font-medium"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
                   >
                     {link.label}
                   </a>

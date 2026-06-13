@@ -3,6 +3,7 @@ import { ArrowDown, Mail, FileDown } from "lucide-react"
 import { GithubIcon, LinkedinIcon } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
+import { toast } from "sonner"
 
 export function Hero() {
   return (
@@ -33,7 +34,11 @@ export function Hero() {
             <a href="#contact">Get in Touch</a>
           </Button>
           <Button variant="secondary" asChild className="w-full sm:w-auto">
-            <a href="/Rajveer_Singh_Resume.pdf" download>
+            <a
+              href="/Rajveer_Singh_Resume.pdf"
+              download
+              onClick={() => toast("Downloading resume...", { description: "Rajveer Singh - IT Support Resume" })}
+            >
               <FileDown className="h-4 w-4" />
               Resume
             </a>

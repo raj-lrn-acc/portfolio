@@ -207,3 +207,31 @@ html {
     @apply px-4;
   }
 }
+
+@media print {
+  nav, .navbar, #navbar, header,
+  .back-to-top, #back-to-top,
+  footer, .footer,
+  .no-print,
+  [aria-label="Toggle theme"],
+  [aria-label="Open menu"],
+  [aria-label="Back to top"] {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt;
+  }
+  a {
+    color: #000 !important;
+    text-decoration: underline;
+  }
+  section {
+    break-inside: avoid;
+    padding: 1rem 0 !important;
+  }
+  .max-w-5xl {
+    max-width: 100% !important;
+  }
+}
