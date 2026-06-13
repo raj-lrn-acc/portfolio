@@ -102,12 +102,13 @@ export function Projects() {
                         visible: { opacity: 1, y: 0 }
                       }}
                       transition={{ duration: 0.25, ease: "easeOut" }}
+                      className="min-w-0"
                     >
-                      <Card className="h-full flex flex-col overflow-hidden group hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
+                      <Card className="h-full flex flex-col rounded-xl group hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
                         {project.snippets && project.snippets.length > 0 ? (
                           <button
                             onClick={() => openSnippets(project.title, project.snippets!, project.repoUrl)}
-                            className="text-left p-0 border-0 bg-transparent cursor-pointer w-full min-w-0 overflow-hidden"
+                            className="text-left p-0 border-0 bg-transparent cursor-pointer w-full min-w-0"
                           >
                             <CodePreview snippet={project.snippets[0]} />
                           </button>
