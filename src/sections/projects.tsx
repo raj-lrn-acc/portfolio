@@ -112,7 +112,7 @@ export function Projects() {
                             <CodePreview snippet={project.snippets[0]} />
                           </button>
                         ) : (
-                          <div className="aspect-video bg-gradient-to-br from-primary/10 via-muted to-primary/5 flex items-center justify-center">
+                          <div className="aspect-video w-full bg-gradient-to-br from-primary/10 via-muted to-primary/5 flex items-center justify-center">
                             <div className="text-center p-4">
                               <div className="w-10 h-10 mx-auto mb-2 rounded-lg border bg-background/50 flex items-center justify-center">
                                 <svg className="w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
