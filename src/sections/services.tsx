@@ -1,7 +1,7 @@
 import { motion } from "framer-motion"
 import { Shield, Users, Terminal, Server, Lock, Wrench } from "lucide-react"
 
-const services = [
+const items = [
   {
     icon: Shield,
     title: "Identity & Access Management",
@@ -36,39 +36,40 @@ const services = [
 
 export function Services() {
   return (
-    <section id="services" className="py-16 md:py-24 px-6">
+    <section id="services" className="py-24 md:py-32 px-6">
       <div className="max-w-5xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.5 }}
+          className="mb-16"
         >
-          <p className="text-sm font-medium text-muted-foreground tracking-widest uppercase mb-2">
+          <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">
+            Capabilities
+          </span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mt-2">
             What I Do
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-12">
-            Core Capabilities
           </h2>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service, idx) => {
-            const Icon = service.icon
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border rounded-xl overflow-hidden">
+          {items.map((item, idx) => {
+            const Icon = item.icon
             return (
               <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 20 }}
+                key={item.title}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.5, ease: "easeOut", delay: idx * 0.05 }}
-                className="border rounded-xl p-6 bg-card hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.4, delay: idx * 0.04 }}
+                className="bg-background p-6 sm:p-8 hover:bg-secondary/30 transition-colors"
               >
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <Icon className="h-5 w-5 text-primary" />
-                </div>
-                <h3 className="font-semibold mb-2">{service.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{service.description}</p>
+                <Icon className="h-6 w-6 mb-4 text-foreground" />
+                <h3 className="font-semibold mb-2">{item.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {item.description}
+                </p>
               </motion.div>
             )
           })}

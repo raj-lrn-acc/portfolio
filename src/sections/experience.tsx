@@ -1,53 +1,122 @@
 import { motion } from "framer-motion"
-import { experiences } from "@/data/experience"
+
+const roles = [
+  {
+    title: "IT Operations Specialist",
+    company: "IT Glow",
+    period: "Jan 2024 – Present",
+    highlights: [
+      "Manage IAM workflows for 500+ users across AD and Azure AD",
+      "Automated 60% of manual provisioning tasks via PowerShell scripts",
+      "Reduced ticket resolution time by 35% through documentation and runbooks",
+    ],
+  },
+  {
+    title: "IT Support Analyst",
+    company: "IT Glow",
+    period: "Jun 2022 – Dec 2023",
+    highlights: [
+      "Tier 1-2 support for identity, access, and authentication issues",
+      "Administered Exchange shared mailboxes, distribution groups, and security groups",
+      "Maintained ITIL-compliant service desk operations in Jira Service Management",
+    ],
+  },
+  {
+    title: "Junior IT Technician",
+    company: "IT Glow",
+    period: "Jan 2021 – May 2022",
+    highlights: [
+      "Onboarded/offboarded users across AD and Microsoft 365",
+      "Configured hardware and software for new hires",
+      "Supported MFA rollouts and password-reset workflows",
+    ],
+  },
+  {
+    title: "Technical Support Intern",
+    company: "IGT",
+    period: "Sep 2020 – Dec 2020",
+    highlights: [
+      "Provided helpdesk support for hardware and software issues",
+      "Assisted with network troubleshooting and system imaging",
+    ],
+  },
+]
+
+const education = [
+  { degree: "Advanced Diploma, Computer Programming", school: "Canadore College", year: "2020" },
+  { degree: "Diploma, Network Administration & Security", school: "CDI College", year: "2018" },
+]
 
 export function Experience() {
   return (
-    <section id="experience" className="py-16 md:py-24 px-6">
+    <section id="experience" className="py-24 md:py-32 px-6">
       <div className="max-w-5xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.5 }}
+          className="mb-16"
         >
-          <p className="text-sm font-medium text-muted-foreground tracking-widest uppercase mb-2">
+          <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">
+            Career
+          </span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mt-2">
             Experience
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-12">
-            Where I've Worked
           </h2>
         </motion.div>
 
-        <div className="relative">
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-border md:-translate-x-px" />
+        <div className="space-y-10">
+          {roles.map((role, idx) => (
+            <motion.div
+              key={role.title + role.company}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.4, delay: idx * 0.06 }}
+            >
+              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-3">
+                <div>
+                  <h3 className="font-semibold text-lg">{role.title}</h3>
+                  <p className="text-sm text-muted-foreground">{role.company}</p>
+                </div>
+                <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">
+                  {role.period}
+                </span>
+              </div>
+              <ul className="space-y-1.5">
+                {role.highlights.map((h, i) => (
+                  <li key={i} className="text-sm text-muted-foreground pl-4 relative">
+                    <span className="absolute left-0 top-[0.6em] w-1.5 h-1.5 rounded-full bg-border" />
+                    {h}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+        </div>
 
-          <div className="space-y-12">
-            {experiences.map((exp, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.5, ease: "easeOut", delay: idx * 0.1 }}
-                className="relative flex flex-col md:flex-row gap-4 md:gap-8"
-              >
-                <div className="hidden md:block flex-1" />
-                <div className="absolute left-2 md:left-1/2 md:-translate-x-1/2 top-1.5 w-3 h-3 rounded-full bg-background border-2 border-primary ring-4 ring-background z-10">
-                  <div className="w-full h-full rounded-full bg-primary animate-pulse" />
-                </div>
-                <div className="flex-1 pl-10 md:pl-0">
-                  <span className="inline-block text-xs font-medium text-muted-foreground bg-muted px-2.5 py-1 rounded-full mb-2">
-                    {exp.period}
-                  </span>
-                  <h3 className="text-lg font-semibold">{exp.title}</h3>
-                  <p className="text-sm text-primary font-medium">{exp.company}</p>
-                  <p className="text-muted-foreground mt-2 leading-relaxed text-sm">{exp.description}</p>
-                </div>
-              </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5 }}
+          className="mt-20"
+        >
+          <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">
+            Education
+          </span>
+          <div className="mt-4 space-y-4">
+            {education.map((edu) => (
+              <div key={edu.degree}>
+                <p className="font-medium">{edu.degree}</p>
+                <p className="text-sm text-muted-foreground">
+                  {edu.school} &middot; {edu.year}
+                </p>
+              </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   )

@@ -1,65 +1,70 @@
 import { motion } from "framer-motion"
-import { skills, categoryLabels } from "@/data/skills"
-import type { Skill } from "@/data/skills"
 
-function SkillBar({ skill, index }: { skill: Skill; index: number }) {
-  return (
-    <div className="space-y-1">
-      <div className="flex justify-between text-sm">
-        <span>{skill.name}</span>
-        <span className="text-muted-foreground">{skill.level}/5</span>
-      </div>
-      <div className="h-2 rounded-full bg-muted overflow-hidden">
-        <motion.div
-          initial={{ width: 0 }}
-          whileInView={{ width: `${(skill.level / 5) * 100}%` }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: index * 0.05 }}
-          className="h-full rounded-full bg-primary"
-        />
-      </div>
-    </div>
-  )
-}
-
-const categories = ["frontend", "backend", "platforms", "tools", "ai"] as const
+const categories = [
+  {
+    title: "Identity & Directory",
+    skills: ["Active Directory", "Azure AD / Entra ID", "Okta", "LDAP", "Group Policy"],
+  },
+  {
+    title: "Scripting & Automation",
+    skills: ["PowerShell", "Python", "Bash", "Ansible", "Terraform"],
+  },
+  {
+    title: "Cloud & Platforms",
+    skills: ["Azure", "AWS", "Exchange Online", "Microsoft 365", "SharePoint"],
+  },
+  {
+    title: "Development",
+    skills: ["React", "TypeScript", "Node.js", "Python (Flask/Django)", "SQL"],
+  },
+  {
+    title: "Tools & Practices",
+    skills: ["Git", "CI/CD", "Docker", "ITIL", "Jira / ServiceNow"],
+  },
+  {
+    title: "Security & Networking",
+    skills: ["OAuth / SAML", "Zero Trust", "RBAC", "TLS / SSL", "Firewall Basics"],
+  },
+]
 
 export function Skills() {
   return (
-    <section id="skills" className="py-16 md:py-24 px-6 bg-muted/30">
+    <section id="skills" className="py-24 md:py-32 px-6">
       <div className="max-w-5xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.5 }}
+          className="mb-16"
         >
-          <p className="text-sm font-medium text-muted-foreground tracking-widest uppercase mb-2">
+          <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">
+            Expertise
+          </span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mt-2">
             Skills
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-12">
-            Tech Stack
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-8">
-          {categories.map((category, catIdx) => (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {categories.map((cat, idx) => (
             <motion.div
-              key={category}
-              initial={{ opacity: 0, y: 20 }}
+              key={cat.title}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5, ease: "easeOut", delay: catIdx * 0.08 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.4, delay: idx * 0.04 }}
             >
-              <h3 className="text-sm font-semibold text-muted-foreground tracking-wider uppercase mb-5">
-                {categoryLabels[category]}
-              </h3>
-              <div className="space-y-3">
-                {skills
-                  .filter((s) => s.category === category)
-                  .map((skill, i) => (
-                    <SkillBar key={skill.name} skill={skill} index={i} />
-                  ))}
+              <h3 className="font-semibold mb-3">{cat.title}</h3>
+              <div className="flex flex-wrap gap-2">
+                {cat.skills.map((skill) => (
+                  <span
+                    key={skill}
+                    className="text-sm px-3 py-1.5 rounded-lg border bg-card text-card-foreground"
+                  >
+                    {skill}
+                  </span>
+                ))}
               </div>
             </motion.div>
           ))}

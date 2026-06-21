@@ -3,35 +3,34 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 export function About() {
   return (
-    <section id="about" className="py-16 md:py-24 px-6">
+    <section id="about" className="py-24 md:py-32 px-6">
       <div className="max-w-5xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.5 }}
+          className="mb-16"
         >
-          <p className="text-sm font-medium text-muted-foreground tracking-widest uppercase mb-2">
+          <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">
             About
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-8">
+          </span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mt-2">
             Who I Am
           </h2>
         </motion.div>
 
         <div className="grid md:grid-cols-[auto_1fr] gap-8 items-start">
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            transition={{ duration: 0.5 }}
             className="flex justify-center md:block"
           >
-            <Avatar className="w-32 h-32 md:w-40 md:h-40 border-2">
+            <Avatar className="w-32 h-32 md:w-40 md:h-40">
               <AvatarImage src="/profile.jpg" alt="Rajveer Singh" className="object-cover" loading="lazy" />
-              <AvatarFallback className="text-3xl bg-muted">
-                RS
-              </AvatarFallback>
+              <AvatarFallback className="text-3xl bg-muted">RS</AvatarFallback>
             </Avatar>
           </motion.div>
 
@@ -39,7 +38,7 @@ export function About() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
             className="space-y-4 text-muted-foreground"
           >
             <p className="text-lg leading-relaxed">

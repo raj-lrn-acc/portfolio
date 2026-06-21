@@ -9,8 +9,6 @@ const navLinks = [
   { href: "#about", label: "About" },
   { href: "#services", label: "Services" },
   { href: "#skills", label: "Skills" },
-  { href: "#certifications", label: "Certs" },
-  { href: "#courses", label: "Courses" },
   { href: "#experience", label: "Experience" },
   { href: "#projects", label: "Projects" },
   { href: "#contact", label: "Contact" },
@@ -54,7 +52,7 @@ export function Navbar() {
     >
       <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-16">
         <a href="#" className="text-lg font-semibold tracking-tight">
-          Portfolio
+          Rajveer<span className="text-muted-foreground">.dev</span>
         </a>
 
         <nav className="hidden md:flex items-center gap-6">

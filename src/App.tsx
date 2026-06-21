@@ -1,7 +1,6 @@
 import { lazy, Suspense } from "react"
 import { Toaster } from "sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { Separator } from "@/components/ui/separator"
 import { Analytics } from "@vercel/analytics/react"
 import { Navbar } from "@/components/navbar"
 import { BackToTop } from "@/components/back-to-top"
@@ -31,20 +30,13 @@ export default function App() {
       <Navbar />
       <main>
         <Hero />
-        <Separator />
         <Lazy><About /></Lazy>
-        <Separator />
         <Lazy><Services /></Lazy>
-        <Separator />
         <Lazy><Skills /></Lazy>
-        <Separator />
         <Lazy><Certifications /></Lazy>
         <Lazy><Courses /></Lazy>
-        <Separator />
         <Lazy><Experience /></Lazy>
-        <Separator />
         <Lazy><Projects /></Lazy>
-        <Separator />
         <Lazy><Contact /></Lazy>
       </main>
       <BackToTop />

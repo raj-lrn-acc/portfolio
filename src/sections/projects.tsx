@@ -1,204 +1,95 @@
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
+import { ExternalLink, GitBranch } from "lucide-react"
 import { projects } from "@/data/projects"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Code, ExternalLink } from "lucide-react"
-import { GithubIcon } from "@/components/icons"
-import { CodePreview } from "@/components/code-preview"
-import { CodeSnippetDialog } from "@/components/code-snippet-dialog"
-import type { CodeSnippet } from "@/data/projects"
 
-const allTags = ["All", ...Array.from(new Set(projects.flatMap((p) => p.tags))).sort()]
+const tagColors: Record<string, string> = {
+  Python: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+  React: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300",
+  TypeScript: "bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-300",
+  "Node.js": "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+  PowerShell: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
+  Flask: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
+}
 
 export function Projects() {
-  const [activeTag, setActiveTag] = useState("All")
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [activeSnippets, setActiveSnippets] = useState<CodeSnippet[]>([])
-  const [activeTitle, setActiveTitle] = useState("")
-  const [activeRepoUrl, setActiveRepoUrl] = useState<string | undefined>()
-
-  const filtered = activeTag === "All" ? projects : projects.filter((p) => p.tags.includes(activeTag))
-
-  const openSnippets = (title: string, snippets: CodeSnippet[], repoUrl?: string) => {
-    setActiveTitle(title)
-    setActiveSnippets(snippets)
-    setActiveRepoUrl(repoUrl)
-    setDialogOpen(true)
-  }
-
   return (
-    <>
-      <section id="projects" className="py-16 md:py-24 px-6 bg-muted/30">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          >
-            <p className="text-sm font-medium text-muted-foreground tracking-widest uppercase mb-2">
-              Projects
-            </p>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">
-              Things I've Built
-            </h2>
-          </motion.div>
+    <section id="projects" className="py-24 md:py-32 px-6">
+      <div className="max-w-5xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5 }}
+          className="mb-16"
+        >
+          <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">
+            Work
+          </span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mt-2">
+            Featured Projects
+          </h2>
+        </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
-            className="flex flex-wrap items-center gap-2 mb-8"
-          >
-            {allTags.map((tag) => (
-              <button
-                key={tag}
-                onClick={() => { setActiveTag(tag) }}
-                className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors cursor-pointer ${
-                  activeTag === tag
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-background text-muted-foreground border-border hover:text-foreground hover:border-foreground/30"
-                }`}
-              >
-                {tag}
-                {tag !== "All" && (
-                  <span className="ml-1.5 text-[10px] opacity-60">
-                    {projects.filter((p) => p.tags.includes(tag)).length}
-                  </span>
-                )}
-              </button>
-            ))}
-            <span className="text-[11px] text-muted-foreground ml-auto">
-              {filtered.length} of {projects.length} projects
-            </span>
-          </motion.div>
-
-          {filtered.length > 0 ? (
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTag}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-              >
-                <motion.div
-                  className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-                  variants={{
-                    hidden: {},
-                    visible: { transition: { staggerChildren: 0.04 } }
-                  }}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  {filtered.map((project) => (
-                    <motion.div
-                      key={project.title}
-                      variants={{
-                        hidden: { opacity: 0, y: 16 },
-                        visible: { opacity: 1, y: 0 }
-                      }}
-                      transition={{ duration: 0.25, ease: "easeOut" }}
-                      className="min-w-0"
-                    >
-                      <Card className="h-full flex flex-col rounded-xl group hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
-                        {project.snippets && project.snippets.length > 0 ? (
-                          <button
-                            onClick={() => openSnippets(project.title, project.snippets!, project.repoUrl)}
-                            className="text-left p-0 border-0 bg-transparent cursor-pointer w-full min-w-0"
-                          >
-                            <CodePreview snippet={project.snippets[0]} />
-                          </button>
-                        ) : (
-                          <div className="aspect-video w-full bg-gradient-to-br from-primary/10 via-muted to-primary/5 flex items-center justify-center">
-                            <div className="text-center p-4">
-                              <div className="w-10 h-10 mx-auto mb-2 rounded-lg border bg-background/50 flex items-center justify-center">
-                                <svg className="w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0 0 21 18V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v12a2.25 2.25 0 0 0 2.25 2.25Z" />
-                                </svg>
-                              </div>
-                              <p className="text-xs font-medium text-muted-foreground">{project.title}</p>
-                            </div>
-                          </div>
-                        )}
-                        <CardHeader>
-                          <div className="flex items-start justify-between gap-2">
-                            <CardTitle className="text-lg">{project.title}</CardTitle>
-                            {project.snippets && project.snippets.length > 0 && (
-                              <button
-                                onClick={() => openSnippets(project.title, project.snippets!, project.repoUrl)}
-                                className="shrink-0 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                                title="View code"
-                              >
-                                <Code className="h-4 w-4" />
-                              </button>
-                            )}
-                          </div>
-                        </CardHeader>
-                        <CardContent className="flex-1">
-                          <p className="text-sm text-muted-foreground leading-relaxed">
-                            {project.description}
-                          </p>
-                          <div className="flex flex-wrap gap-1.5 mt-4">
-                            {project.tags.map((tag) => (
-                              <Badge key={tag} variant="secondary" className="text-xs">
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
-                        </CardContent>
-                        <CardFooter className="gap-2 flex-wrap">
-                          {project.liveUrl && (
-                            <Button variant="outline" size="sm" asChild>
-                              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                                <ExternalLink className="h-3.5 w-3.5" />
-                                Live
-                              </a>
-                            </Button>
-                          )}
-                          {project.repoUrl && (
-                            <Button variant="outline" size="sm" asChild>
-                              <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
-                                <GithubIcon className="h-3.5 w-3.5" />
-                                Code
-                              </a>
-                            </Button>
-                          )}
-                          {project.snippets && project.snippets.length > 0 && (
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              onClick={() => openSnippets(project.title, project.snippets!, project.repoUrl)}
-                            >
-                              <Code className="h-3.5 w-3.5" />
-                              View Code
-                            </Button>
-                          )}
-                        </CardFooter>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </motion.div>
-            </AnimatePresence>
-          ) : (
-            <div className="text-center py-16">
-              <p className="text-muted-foreground">No projects match this filter.</p>
-            </div>
-          )}
+        <div className="space-y-6">
+          {projects.map((project, idx) => (
+            <motion.article
+              key={project.title}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.4, delay: idx * 0.06 }}
+              className="group border rounded-xl p-6 sm:p-8 hover:bg-secondary/30 transition-colors"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-xl font-semibold">{project.title}</h3>
+                    <div className="flex gap-2">
+                      {project.liveUrl && (
+                        <a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-foreground transition-colors"
+                          aria-label="View live"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      )}
+                      {project.repoUrl && (
+                        <a
+                          href={project.repoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-foreground transition-colors"
+                          aria-label="Source code"
+                        >
+                          <GitBranch className="h-4 w-4" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                    {project.description}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {project.tags?.map((tag) => (
+                      <span
+                        key={tag}
+                        className={`text-xs font-medium px-2 py-0.5 rounded ${
+                          tagColors[tag] || "bg-secondary text-secondary-foreground"
+                        }`}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.article>
+          ))}
         </div>
-      </section>
-
-      <CodeSnippetDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        snippets={activeSnippets}
-        projectTitle={activeTitle}
-        repoUrl={activeRepoUrl}
-      />
-    </>
+      </div>
+    </section>
   )
 }

@@ -4,19 +4,20 @@ import { GraduationCap } from "lucide-react"
 
 export function Courses() {
   return (
-    <section id="courses" className="py-16 md:py-24 px-6 bg-muted/30">
+    <section id="courses" className="py-24 md:py-32 px-6">
       <div className="max-w-5xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.5 }}
+          className="mb-16"
         >
-          <p className="text-sm font-medium text-muted-foreground tracking-widest uppercase mb-2">
-            Courses
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-12">
-            Self-Study
+          <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">
+            Study
+          </span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mt-2">
+            Self-Study Courses
           </h2>
         </motion.div>
 
@@ -24,14 +25,14 @@ export function Courses() {
           {courses.map((course, idx) => (
             <motion.div
               key={course.code}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5, ease: "easeOut", delay: idx * 0.1 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.4, delay: idx * 0.06 }}
               className="border rounded-xl p-6 bg-card"
             >
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                <GraduationCap className="h-5 w-5 text-primary" />
+              <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center mb-4">
+                <GraduationCap className="h-5 w-5" />
               </div>
               <p className="text-xs font-mono text-muted-foreground mb-1">{course.code}</p>
               <h3 className="font-semibold leading-snug mb-2">{course.name}</h3>
