@@ -2,7 +2,7 @@
 	import { onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
 	import { get } from 'svelte/store';
-	import { viewState, detailProject } from '$lib/stores';
+	import { viewState, detailProject, mouse } from '$lib/stores';
 	import { projects } from '$lib/data';
 
 	let clean: (() => void) | undefined;
@@ -111,6 +111,7 @@
 				cv.setPointerCapture(e.pointerId);
 			};
 			const pm_ = (e: PointerEvent) => {
+				mouse.set({ x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight });
 				if (!dragging || state !== 'projects') return;
 				const dx = e.clientX - lastX;
 				moved += Math.abs(dx);
