@@ -4,20 +4,14 @@
 	import Loader from '$lib/Loader.svelte';
 	import Cursor from '$lib/Cursor.svelte';
 	import Header from '$lib/Header.svelte';
-	import { loaderVisible, mouse } from '$lib/stores';
-	import { onMount } from 'svelte';
-	import { fly, fade } from 'svelte/transition';
+	import { loaderVisible } from '$lib/stores';
+
+	let { children } = $props();
 
 	let showLoader = $state(true);
-	let prevLoc = $state('');
 
 	function handleEnter() {
 		showLoader = false;
-	}
-
-	function handleNavigate() {
-		const { pathname } = window.location;
-		prevLoc = pathname;
 	}
 </script>
 
