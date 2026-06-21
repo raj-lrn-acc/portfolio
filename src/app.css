@@ -1,31 +1,28 @@
+@import "tailwindcss";
+
+@theme inline {
+	--font-serif: "Playfair Display", Georgia, serif;
+	--font-sans: "Inter", system-ui, -apple-system, sans-serif;
+	--color-pink: #efded9;
+}
+
 *,
 *::before,
 *::after {
 	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
-}
-
-:root {
-	--bg: #212121;
-	--pink: #efded9;
-}
-
-html {
-	scroll-behavior: auto;
 }
 
 body {
-	font-family: 'Inter', system-ui, -apple-system, sans-serif;
-	background: var(--bg);
+	font-family: var(--font-sans);
+	background: #212121;
 	color: white;
 	-webkit-font-smoothing: antialiased;
 	overflow-x: hidden;
 }
 
 ::selection {
-	background: var(--pink);
-	color: var(--bg);
+	background: #efded9;
+	color: #212121;
 }
 
 /* Loader cube */
@@ -45,9 +42,9 @@ body {
 	align-items: center;
 	justify-content: center;
 	font-size: 4rem;
-	font-family: 'Playfair Display', Georgia, serif;
+	font-family: var(--font-serif);
 	font-weight: 300;
-	background: var(--bg);
+	background: #212121;
 	color: #424242;
 	backface-visibility: visible;
 }
@@ -85,9 +82,9 @@ body {
 	top: 0;
 	left: 0;
 	transform: translateY(100%);
-	font-family: 'Playfair Display', Georgia, serif;
+	font-family: var(--font-serif);
 	font-style: italic;
-	color: var(--pink);
+	color: #efded9;
 }
 
 .nav-item:hover .nav-item-default {
@@ -100,7 +97,7 @@ body {
 	opacity: 1;
 }
 
-/* Animations */
+/* Pulse animation */
 @keyframes pulse {
 	0%, 100% { opacity: 1; }
 	50% { opacity: 0.3; }
@@ -118,7 +115,6 @@ body {
 	transform: translateY(-2px);
 }
 
-/* Glassmorphism utility */
 .glass {
 	background: rgba(255, 255, 255, 0.04);
 	backdrop-filter: blur(12px);
