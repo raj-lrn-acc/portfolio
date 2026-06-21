@@ -7,8 +7,8 @@ export const loaderVisible = writable(true);
 export const cursorHover = writable(false);
 export const detailProject = writable<number | null>(null);
 
-export const viewState = derived(page, ($page) => {
-  const path = $page.url.pathname;
+export const viewState = derived(page, ($p) => {
+  const path = $p.url.pathname;
   if (path === '/') return 'home';
   if (path.startsWith('/projects')) return 'projects';
   if (path.startsWith('/contact')) return 'contact';

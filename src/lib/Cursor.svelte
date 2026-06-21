@@ -2,29 +2,26 @@
 	import { mouse, cursorHover } from '$lib/stores';
 </script>
 
-<div class="pointer-events-none fixed inset-0 z-[9999]">
+<div class="pointer-events-none fixed inset-0 z-[9999]" style="cursor: none">
 	<div
-		class="absolute rounded-full -translate-x-1/2 -translate-y-1/2 mix-blend-difference"
+		class="absolute -translate-x-1/2 -translate-y-1/2 bg-white rounded-full mix-blend-difference"
 		style="
-			width: {$cursorHover ? 32 : 6}px;
-			height: {$cursorHover ? 32 : 6}px;
+			width: {$cursorHover ? 24 : 5}px;
+			height: {$cursorHover ? 24 : 5}px;
 			left: {$mouse.x * 100}vw;
 			top: {$mouse.y * 100}vh;
-			background: white;
-			transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+			transition: width 0.3s, height 0.3s;
 	"
 	></div>
 	<div
-		class="absolute rounded-full -translate-x-1/2 -translate-y-1/2 border pointer-events-none"
+		class="absolute -translate-x-1/2 -translate-y-1/2 border rounded-full"
 		style="
-			width: {$cursorHover ? 48 : 28}px;
-			height: {$cursorHover ? 48 : 28}px;
+			width: {$cursorHover ? 40 : 24}px;
+			height: {$cursorHover ? 40 : 24}px;
 			left: {$mouse.x * 100}vw;
 			top: {$mouse.y * 100}vh;
-			border-color: rgba(255, 255, 255, {$cursorHover ? 0.6 : 0.3});
-			transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-						height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-						border-color 0.4s ease;
+			border-color: rgba(255,255,255,{$cursorHover ? 0.5 : 0.2});
+			transition: width 0.4s, height 0.4s, border-color 0.3s;
 	"
 	></div>
 </div>

@@ -1,78 +1,69 @@
 import * as THREE from 'three';
 
-export function createProceduralBrain(material: THREE.MeshPhysicalMaterial): THREE.Group {
-  const group = new THREE.Group();
+export function createBrain(mat: THREE.MeshPhysicalMaterial): THREE.Group {
+  const g = new THREE.Group();
 
-  const leftGeo = buildHemisphere(-1, material);
-  const rightGeo = buildHemisphere(1, material);
+  const left = hemi(-1);
+  const right = hemi(1);
+  g.add(new THREE.Mesh(left, mat));
+  g.add(new THREE.Mesh(right, mat));
 
-  const leftMesh = new THREE.Mesh(leftGeo, material);
-  const rightMesh = new THREE.Mesh(rightGeo, material);
+  const cb = new THREE.Mesh(callosum(), mat);
+  g.add(cb);
 
-  group.add(leftMesh);
-  group.add(rightMesh);
+  const stem = new THREE.Mesh(stemGeo(), mat);
+  g.add(stem);
 
-  const stemGeo = new THREE.CylinderGeometry(0.2, 0.35, 0.8, 12, 8);
-  stemGeo.translate(0, -0.9, 0);
-  const stem = new THREE.Mesh(stemGeo, material);
-  group.add(stem);
-
-  const curve = new THREE.CubicBezierCurve3(
-    new THREE.Vector3(-0.55, 0.15, 0),
-    new THREE.Vector3(-0.2, 0.6, 0.05),
-    new THREE.Vector3(0.2, 0.6, -0.05),
-    new THREE.Vector3(0.55, 0.15, 0)
-  );
-  const tubeGeo = new THREE.TubeGeometry(curve, 14, 0.1, 8, false);
-  const connector = new THREE.Mesh(tubeGeo, material);
-  group.add(connector);
-
-  group.scale.setScalar(1.8);
-  return group;
+  g.scale.setScalar(1.6);
+  return g;
 }
 
-function buildHemisphere(side: number, material: THREE.MeshPhysicalMaterial): THREE.BufferGeometry {
-  const geo = new THREE.SphereGeometry(1, 48, 48, 0, Math.PI * 2, 0, Math.PI / 2 + 0.3);
-  const pos = geo.attributes.position;
-  const vertex = new THREE.Vector3();
+function hemi(side: number): THREE.BufferGeometry {
+  const geo = new THREE.SphereGeometry(1, 56, 56);
+  const p = geo.attributes.position;
 
-  for (let i = 0; i < pos.count; i++) {
-    vertex.fromBufferAttribute(pos, i);
-    let { x, y, z } = vertex;
+  for (let i = 0; i < p.count; i++) {
+    let x = p.getX(i), y = p.getY(i), z = p.getZ(i);
 
-    x *= 0.85;
-    y *= 1.05;
-    z *= 0.7 + y * 0.15;
+    x *= 0.75;
+    y *= 0.95;
+    z *= 0.65;
 
-    const gyri = (
-      Math.sin(x * 4.5 + y * 2.0) * Math.cos(z * 3.5) * 0.18 +
-      Math.sin(x * 7.0 + z * 5.0) * 0.10 +
-      Math.cos(y * 6.0 + x * 3.0) * 0.08 +
-      Math.sin((x + z) * 5.0 + y * 4.0) * 0.06
-    );
+    const gyr =
+      Math.sin(x * 5.0 + y * 2.5) * Math.cos(z * 4.0) * 0.14 +
+      Math.sin(x * 8.0 + z * 5.0 + y * 3.0) * 0.09 +
+      Math.cos(y * 6.0 + x * 3.5) * Math.sin(z * 4.5) * 0.07 +
+      Math.sin((x + z) * 5.5 + y * 4.0) * 0.05;
 
-    const len = Math.sqrt(x * x + y * y + z * z);
-    if (len > 0.01) {
-      x += (x / len) * gyri;
-      y += (y / len) * gyri;
-      z += (z / len) * gyri;
-    }
+    const l = Math.sqrt(x * x + y * y + z * z);
+    if (l > 0.001) { x += (x / l) * gyr; y += (y / l) * gyr; z += (z / l) * gyr; }
 
-    const innerCutoff = 0.15;
-    if (side === -1 && x > -innerCutoff) {
-      const excess = x - (-innerCutoff);
-      x = -innerCutoff + excess * 0.3;
-    }
-    if (side === 1 && x < innerCutoff) {
-      const excess = x - innerCutoff;
-      x = innerCutoff + excess * 0.3;
-    }
+    const squeeze = 0.2;
+    if (side === -1 && x > -squeeze) x = -squeeze + (x + squeeze) * 0.25;
+    if (side === 1 && x < squeeze) x = squeeze + (x - squeeze) * 0.25;
 
-    const s = Math.sin(y * 2.5 + x * 1.5 + z * 2.0) * 0.04;
-    pos.setXYZ(i, x, y + s, z);
+    x += side * 0.38;
+    y *= 0.92 + Math.abs(x * 0.15);
+
+    p.setXYZ(i, x, y, z);
   }
-
-  pos.needsUpdate = true;
+  p.needsUpdate = true;
   geo.computeVertexNormals();
   return geo;
+}
+
+function callosum(): THREE.BufferGeometry {
+  const curve = new THREE.CubicBezierCurve3(
+    new THREE.Vector3(-0.45, 0.25, 0),
+    new THREE.Vector3(-0.15, 0.55, 0.04),
+    new THREE.Vector3(0.15, 0.55, -0.04),
+    new THREE.Vector3(0.45, 0.25, 0)
+  );
+  return new THREE.TubeGeometry(curve, 12, 0.08, 8, false);
+}
+
+function stemGeo(): THREE.BufferGeometry {
+  const g = new THREE.CylinderGeometry(0.18, 0.32, 0.7, 10, 6);
+  g.translate(0, -0.85, -0.1);
+  return g;
 }

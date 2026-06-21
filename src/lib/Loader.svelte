@@ -1,86 +1,38 @@
 <script lang="ts">
 	import { loaderVisible } from '$lib/stores';
 
-	let progress = $state(0);
+	let pct = $state(0);
 	let ready = $state(false);
-	let interval: ReturnType<typeof setInterval>;
 
 	$effect(() => {
 		if (!loaderVisible.value) return;
-		interval = setInterval(() => {
-			progress += 1 + Math.random() * 3;
-			if (progress >= 100) {
-				progress = 100;
-				clearInterval(interval);
-				setTimeout(() => { ready = true; }, 300);
-			}
+		const iv = setInterval(() => {
+			pct += 1 + Math.random() * 3;
+			if (pct >= 100) { pct = 100; clearInterval(iv); setTimeout(() => ready = true, 200); }
 		}, 40);
-
-		return () => clearInterval(interval);
+		return () => clearInterval(iv);
 	});
 
-	function enter() {
-		loaderVisible.set(false);
-	}
+	function enter() { loaderVisible.set(false); }
 </script>
 
 {#if $loaderVisible}
-	<div class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0a0a0a]" style="animation: fade-in 0.5s ease-out">
-		<div class="loader-cube mb-16">
-			<div class="cube-face front">U</div>
-			<div class="cube-face back">N</div>
-			<div class="cube-face right">S</div>
-			<div class="cube-face left">E</div>
-			<div class="cube-face top">N</div>
-			<div class="cube-face bottom">E</div>
-		</div>
+	<div class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0a0a0a]" style="animation: fade-in 0.3s ease-out">
+		<div class="w-12 h-12 border border-[#333] flex items-center justify-center mb-12 text-white/50 font-serif text-lg tracking-[0.3em]" style="animation: pulse-subtle 2s ease-in-out infinite">P</div>
 
-		<div class="w-48 h-px bg-[#222] mb-3 overflow-hidden rounded-full">
-			<div class="h-full bg-[#e0e0e0] transition-all duration-300 ease-out rounded-full" style="width: {progress}%"></div>
+		<div class="w-40 h-px bg-[#222] mb-2 overflow-hidden rounded-full">
+			<div class="h-full bg-white/40 transition-all duration-300 rounded-full" style="width: {pct}%"></div>
 		</div>
-
-		<p class="text-xs text-[#555] mb-12 font-mono tracking-widest uppercase">{Math.floor(progress)}%</p>
+		<p class="text-[10px] text-[#444] mb-10 font-mono tracking-widest">{Math.floor(pct)}%</p>
 
 		<button
 			onclick={enter}
-			class="px-10 py-3 border border-[#333] text-[#ccc] text-sm tracking-widest uppercase
+			class="px-8 py-2.5 border border-[#333] text-[#999] text-xs tracking-[0.2em] uppercase
 				hover:bg-white hover:text-black hover:border-white
-				transition-all duration-700 ease-out
-				{ready ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}"
-			style="transition-property: opacity, transform, background-color, color, border-color; transition-duration: 0.7s; {ready ? '' : 'pointer-events: none;'}"
+				transition-all duration-500"
+			style="opacity: {ready ? 1 : 0}; transform: translateY({ready ? '0' : '8px'}); transition: opacity 0.5s, transform 0.5s"
 		>
 			Enter
 		</button>
 	</div>
 {/if}
-
-<style>
-	.loader-cube {
-		width: 80px;
-		height: 80px;
-		position: relative;
-		transform-style: preserve-3d;
-		animation: loader-cube 6s ease-in-out infinite;
-	}
-	.cube-face {
-		position: absolute;
-		width: 80px;
-		height: 80px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-family: 'Playfair Display', serif;
-		font-size: 28px;
-		font-weight: 300;
-		color: #e0e0e0;
-		background: rgba(20, 20, 20, 0.9);
-		border: 1px solid rgba(255, 255, 255, 0.06);
-		backface-visibility: visible;
-	}
-	.front  { transform: translateZ(40px); }
-	.back   { transform: rotateY(180deg) translateZ(40px); }
-	.right  { transform: rotateY(90deg) translateZ(40px); }
-	.left   { transform: rotateY(-90deg) translateZ(40px); }
-	.top    { transform: rotateX(90deg) translateZ(40px); }
-	.bottom { transform: rotateX(-90deg) translateZ(40px); }
-</style>
