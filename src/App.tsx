@@ -19,11 +19,16 @@ function Lazy({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true)
-  useKeyboardShortcuts()
 
   if (showSplash) {
     return <SplashScreen onEnter={() => setShowSplash(false)} />
   }
+
+  return <MainApp />
+}
+
+function MainApp() {
+  useKeyboardShortcuts()
 
   return (
     <TooltipProvider delayDuration={200}>
