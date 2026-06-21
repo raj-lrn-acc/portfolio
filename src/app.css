@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-base: #0a0a0a;
   --font-serif: "Playfair Display", Georgia, serif;
   --font-sans: "Inter", system-ui, sans-serif;
 }
@@ -14,17 +13,7 @@ html, body {
   overflow-x: hidden;
 }
 body { min-height: 100vh; }
-::selection { background: rgba(255,255,255,0.1); }
+::selection { background: rgba(255,255,255,0.08); }
 
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes pulse-subtle {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; }
-}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }

@@ -16,7 +16,7 @@
 <Header />
 <main class="relative z-10 min-h-screen">
 	{#key $page.url.pathname}
-		<div style="animation: fade-up 0.5s ease-out">
+		<div style="animation: fade-up 0.45s ease-out">
 			{@render children()}
 		</div>
 	{/key}

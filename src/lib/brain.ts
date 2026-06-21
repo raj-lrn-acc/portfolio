@@ -1,69 +1,67 @@
 import * as THREE from 'three';
 
-export function createBrain(mat: THREE.MeshPhysicalMaterial): THREE.Group {
+export function buildBrain(mat: THREE.MeshPhysicalMaterial): THREE.Group {
   const g = new THREE.Group();
 
-  const left = hemi(-1);
-  const right = hemi(1);
+  const left = hemisphere(-1);
+  const right = hemisphere(1);
+
   g.add(new THREE.Mesh(left, mat));
   g.add(new THREE.Mesh(right, mat));
 
-  const cb = new THREE.Mesh(callosum(), mat);
-  g.add(cb);
+  const curve = new THREE.CubicBezierCurve3(
+    new THREE.Vector3(-0.4, 0.2, 0),
+    new THREE.Vector3(-0.1, 0.5, 0.03),
+    new THREE.Vector3(0.1, 0.5, -0.03),
+    new THREE.Vector3(0.4, 0.2, 0)
+  );
+  g.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 10, 0.07, 6, false), mat));
 
-  const stem = new THREE.Mesh(stemGeo(), mat);
-  g.add(stem);
+  const stem = new THREE.CylinderGeometry(0.15, 0.28, 0.6, 8);
+  stem.translate(0, -0.75, -0.08);
+  g.add(new THREE.Mesh(stem, mat));
 
-  g.scale.setScalar(1.6);
+  g.scale.setScalar(1.5);
   return g;
 }
 
-function hemi(side: number): THREE.BufferGeometry {
-  const geo = new THREE.SphereGeometry(1, 56, 56);
+function hemisphere(side: number): THREE.BufferGeometry {
+  const geo = new THREE.SphereGeometry(1, 48, 48);
   const p = geo.attributes.position;
+  const v = new THREE.Vector3();
 
   for (let i = 0; i < p.count; i++) {
-    let x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+    v.fromBufferAttribute(p, i);
+    let { x, y, z } = v;
 
-    x *= 0.75;
-    y *= 0.95;
+    const egg = 1 + z * 0.25;
+    x *= 0.7 * egg;
+    y *= 0.9 * (1 + z * 0.08);
     z *= 0.65;
 
-    const gyr =
-      Math.sin(x * 5.0 + y * 2.5) * Math.cos(z * 4.0) * 0.14 +
-      Math.sin(x * 8.0 + z * 5.0 + y * 3.0) * 0.09 +
-      Math.cos(y * 6.0 + x * 3.5) * Math.sin(z * 4.5) * 0.07 +
-      Math.sin((x + z) * 5.5 + y * 4.0) * 0.05;
+    const gyri =
+      Math.sin(x * 5 + y * 3) * Math.cos(z * 4) * 0.12 +
+      Math.sin(x * 8 + z * 5 + y * 2) * 0.08 +
+      Math.cos(y * 6 + x * 4) * Math.sin(z * 4.5) * 0.06 +
+      Math.sin((x + z) * 4.5 + y * 3) * 0.05;
 
-    const l = Math.sqrt(x * x + y * y + z * z);
-    if (l > 0.001) { x += (x / l) * gyr; y += (y / l) * gyr; z += (z / l) * gyr; }
+    const len = Math.sqrt(x * x + y * y + z * z);
+    if (len > 0.001) {
+      x += (x / len) * gyri;
+      y += (y / len) * gyri;
+      z += (z / len) * gyri;
+    }
 
-    const squeeze = 0.2;
-    if (side === -1 && x > -squeeze) x = -squeeze + (x + squeeze) * 0.25;
-    if (side === 1 && x < squeeze) x = squeeze + (x - squeeze) * 0.25;
+    const flat = 0.05;
+    if (side === -1 && x > -flat) x = -flat + (x + flat) * 0.15;
+    if (side === 1 && x < flat) x = flat + (x - flat) * 0.15;
 
-    x += side * 0.38;
-    y *= 0.92 + Math.abs(x * 0.15);
+    x += side * 0.32;
 
     p.setXYZ(i, x, y, z);
   }
+
   p.needsUpdate = true;
   geo.computeVertexNormals();
   return geo;
-}
-
-function callosum(): THREE.BufferGeometry {
-  const curve = new THREE.CubicBezierCurve3(
-    new THREE.Vector3(-0.45, 0.25, 0),
-    new THREE.Vector3(-0.15, 0.55, 0.04),
-    new THREE.Vector3(0.15, 0.55, -0.04),
-    new THREE.Vector3(0.45, 0.25, 0)
-  );
-  return new THREE.TubeGeometry(curve, 12, 0.08, 8, false);
-}
-
-function stemGeo(): THREE.BufferGeometry {
-  const g = new THREE.CylinderGeometry(0.18, 0.32, 0.7, 10, 6);
-  g.translate(0, -0.85, -0.1);
-  return g;
 }
