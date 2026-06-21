@@ -1,7 +1,7 @@
 import { useRef, useMemo } from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
 import * as THREE from "three"
-import { mouse } from "@/hooks/useMouseParallax"
+import { mouse, drag } from "@/hooks/useMouseParallax"
 
 function Shape({ pos, scale: s, color, opacity }: { pos: THREE.Vector3; scale: number; color: THREE.Color; opacity: number }) {
   const ref = useRef<THREE.Mesh>(null!)
@@ -67,7 +67,7 @@ function FloatingShapes() {
   )
 }
 
-function Particles({ count = 1200 }: { count?: number }) {
+function Particles({ count = 1000 }: { count?: number }) {
   const ref = useRef<THREE.Points>(null!)
   const [positions, colors, sizes] = useMemo(() => {
     const pos = new Float32Array(count * 3)
@@ -81,17 +81,17 @@ function Particles({ count = 1200 }: { count?: number }) {
       col[i * 3] = c.r
       col[i * 3 + 1] = c.g
       col[i * 3 + 2] = c.b
-      siz[i] = 0.01 + Math.random() * 0.04
+      siz[i] = 0.02 + Math.random() * 0.03
     }
     return [pos, col, siz]
   }, [])
 
   useFrame((state) => {
     if (!ref.current) return
-    const positions = ref.current.geometry.attributes.position.array as Float32Array
+    const pos = ref.current.geometry.attributes.position.array as Float32Array
     for (let i = 0; i < count; i++) {
-      positions[i * 3] += Math.sin(state.clock.elapsedTime * 0.05 + i) * 0.0003
-      positions[i * 3 + 1] += Math.cos(state.clock.elapsedTime * 0.04 + i * 1.3) * 0.0003
+      pos[i * 3] += Math.sin(state.clock.elapsedTime * 0.05 + i) * 0.0003
+      pos[i * 3 + 1] += Math.cos(state.clock.elapsedTime * 0.04 + i * 1.3) * 0.0003
     }
     ref.current.geometry.attributes.position.needsUpdate = true
     ref.current.rotation.y = state.clock.elapsedTime * 0.015 + mouse.x * 0.02
@@ -109,7 +109,7 @@ function Particles({ count = 1200 }: { count?: number }) {
         size={0.04}
         vertexColors
         transparent
-        opacity={0.5}
+        opacity={0.4}
         sizeAttenuation
         blending={THREE.AdditiveBlending}
         depthWrite={false}
@@ -123,8 +123,7 @@ function CenterTorus() {
 
   useFrame((state) => {
     if (!ref.current) return
-    const depthZ = -5
-    const df = 1 + depthZ * 0.08
+    const df = 1 + (-5) * 0.08
     ref.current.position.x = mouse.x * df * 0.5
     ref.current.position.y = mouse.y * df * 0.4
     ref.current.rotation.x = state.clock.elapsedTime * 0.12 + mouse.y * 0.1
@@ -133,21 +132,14 @@ function CenterTorus() {
   })
 
   return (
-    <TorusKnotExt args={[1.2, 0.35, 64, 8]} />
-  )
-}
-
-function TorusKnotExt({ args }: { args: [number, number, number, number] }) {
-  const ref = useRef<THREE.Mesh>(null!)
-  return (
     <mesh ref={ref} position={[0, 0, -2]}>
-      <torusKnotGeometry args={args} />
+      <torusKnotGeometry args={[1.2, 0.35, 64, 8]} />
       <meshPhysicalMaterial
         color="#efded9"
         metalness={0.3}
         roughness={0.2}
         transparent
-        opacity={0.2}
+        opacity={0.15}
         wireframe
         envMapIntensity={0.5}
       />
@@ -182,9 +174,17 @@ function GlowRings() {
   )
 }
 
-function SceneInner() {
+function SceneGroup() {
+  const groupRef = useRef<THREE.Group>(null!)
+
+  useFrame(() => {
+    if (!groupRef.current) return
+    groupRef.current.rotation.x += (drag.rotationX - groupRef.current.rotation.x) * 0.08
+    groupRef.current.rotation.y += (drag.rotationY - groupRef.current.rotation.y) * 0.08
+  })
+
   return (
-    <>
+    <group ref={groupRef}>
       <ambientLight intensity={0.3} />
       <pointLight position={[5, 5, 5]} intensity={0.5} color="#efded9" />
       <pointLight position={[-5, -3, -5]} intensity={0.3} color="#ffffff" />
@@ -192,13 +192,13 @@ function SceneInner() {
       <FloatingShapes />
       <CenterTorus />
       <GlowRings />
-    </>
+    </group>
   )
 }
 
 export default function Scene3D() {
   return (
-    <div className="fixed inset-0 z-0">
+    <div className="fixed inset-0 z-0 touch-none">
       <Canvas
         camera={{ position: [0, 0, 6], fov: 60, near: 0.1, far: 50 }}
         dpr={[1, 1.5]}
@@ -207,8 +207,9 @@ export default function Scene3D() {
           alpha: true,
           powerPreference: "high-performance",
         }}
+        style={{ touchAction: "none" }}
       >
-        <SceneInner />
+        <SceneGroup />
       </Canvas>
     </div>
   )

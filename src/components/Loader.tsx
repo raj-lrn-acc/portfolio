@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 
 const letters = ["U", "N", "S", "E", "N", "E"]
@@ -8,8 +8,6 @@ export function Loader({ onEnter }: { onEnter: () => void }) {
   const [visible, setVisible] = useState(true)
   const [eyes, setEyes] = useState({ left: { x: 0, y: 0 }, right: { x: 0, y: 0 } })
   const containerRef = useRef<HTMLDivElement>(null)
-  const [, setHoveredBtn] = useState<string | false>(false)
-
   useEffect(() => {
     const t = setInterval(() => {
       setProgress((p) => Math.min(p + Math.random() * 15, 100))
@@ -37,10 +35,10 @@ export function Loader({ onEnter }: { onEnter: () => void }) {
     }
   }, [])
 
-  const handleEnter = () => {
+  const handleEnter = useCallback(() => {
     setVisible(false)
     setTimeout(onEnter, 800)
-  }
+  }, [onEnter])
 
   return (
     <AnimatePresence>
@@ -93,8 +91,6 @@ export function Loader({ onEnter }: { onEnter: () => void }) {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
                   onClick={handleEnter}
-                  onMouseEnter={() => setHoveredBtn("noaudio")}
-                  onMouseLeave={() => setHoveredBtn(false)}
                   className="relative text-xs font-medium uppercase tracking-wider text-foreground bg-transparent border-0 py-1 overflow-hidden group"
                   style={{ cursor: "none" }}
                 >
@@ -106,10 +102,8 @@ export function Loader({ onEnter }: { onEnter: () => void }) {
                 <motion.button
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
+                  transition={{ delay: 0.6, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
                   onClick={handleEnter}
-                  onMouseEnter={() => setHoveredBtn("enter")}
-                  onMouseLeave={() => setHoveredBtn(false)}
                   className="inline-flex items-center gap-3 px-8 py-3.5 bg-pink text-background text-xs font-medium uppercase tracking-wider rounded-full hover:opacity-90 transition-all duration-300 shadow-lg shadow-pink/20"
                   style={{ cursor: "none" }}
                 >

@@ -5,6 +5,13 @@ import { projects } from "@/data/projects"
 import { Footer } from "@/components/Footer"
 import Scene3D from "@/components/Scene3D"
 
+const transition = { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] as const }
+const fadeUp = {
+  initial: { opacity: 0, y: 24 },
+  animate: { opacity: 1, y: 0 },
+  transition,
+}
+
 export default function Home() {
   const gridRef = useRef<HTMLDivElement>(null)
 
@@ -28,17 +35,15 @@ export default function Home() {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="relative z-10 text-center px-6">
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            {...fadeUp}
+            transition={{ ...fadeUp.transition, delay: 0.2 }}
             className="text-xs tracking-[0.3em] uppercase text-muted-foreground mb-6 font-sans"
           >
             Portfolio &mdash; 2026
           </motion.p>
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+            {...fadeUp}
+            transition={{ ...fadeUp.transition, delay: 0.4 }}
             className="text-5xl sm:text-7xl md:text-9xl font-serif tracking-tight leading-[0.9] text-foreground"
           >
             Rajveer
@@ -46,9 +51,8 @@ export default function Home() {
             <span className="font-serif italic font-light text-pink">Singh</span>
           </motion.h1>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
+            {...fadeUp}
+            transition={{ ...fadeUp.transition, delay: 0.6 }}
             className="mt-6 text-sm text-muted-foreground max-w-md mx-auto font-sans leading-relaxed"
           >
             Enterprise infrastructure, identity access,
@@ -58,26 +62,27 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.2 }}
+            transition={{ delay: 1.2, duration: 0.8, ease: [0.25, 0.1, 0.25, 1] as const }}
             className="mt-10 flex items-center justify-center gap-3 text-xs text-muted-foreground"
           >
             <span className="w-8 h-px bg-muted-foreground/50" />
-            <span className="tracking-widest uppercase font-sans">Drag to explore</span>
+            <span className="tracking-widest uppercase font-sans animate-pulse">Drag to explore</span>
             <span className="w-8 h-px bg-muted-foreground/50" />
           </motion.div>
         </div>
       </section>
 
-      {/* Featured Projects */}
+      {/* Selected Projects */}
       <section className="relative z-10 px-6 py-32">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const }}
             className="flex items-center gap-3 mb-16"
           >
-            <span className="text-2xl text-pink font-serif italic">&#8220;</span>
+            <span className="text-2xl text-pink font-serif italic">&quot;</span>
             <span className="text-xs tracking-widest uppercase text-muted-foreground font-sans">Selected Projects</span>
           </motion.div>
 
@@ -88,7 +93,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.08, duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const }}
               >
                 <Link
                   to={`/projects`}
@@ -129,6 +134,7 @@ export default function Home() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const }}
             className="mt-12 text-center"
           >
             <Link
@@ -144,13 +150,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Contact / Let's work together */}
+      {/* Let's work together */}
       <section className="relative z-10 px-6 py-32 border-t border-border/50">
         <div className="max-w-7xl mx-auto text-center">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const }}
             className="text-xs tracking-widest uppercase text-muted-foreground mb-6 font-sans"
           >
             Let&apos;s Work Together
@@ -159,7 +166,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+            transition={{ delay: 0.1, duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const }}
             className="text-4xl sm:text-5xl font-serif tracking-tight leading-tight mb-8"
           >
             Have a project in mind?
