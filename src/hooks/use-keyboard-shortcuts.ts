@@ -1,8 +1,8 @@
 import { useEffect } from "react"
 
 const sections = [
-  "home", "about", "skills", "certifications",
-  "courses", "experience", "projects", "contact",
+  "hero", "specs", "features", "stack",
+  "testimonials", "projects", "changelog", "contact",
 ] as const
 
 export function useKeyboardShortcuts() {
@@ -21,7 +21,7 @@ export function useKeyboardShortcuts() {
       if (num >= 1 && num <= sections.length) {
         e.preventDefault()
         const id = sections[num - 1]
-        const el = id === "home" ? null : document.getElementById(id)
+        const el = id === "hero" ? document.getElementById("hero") : document.getElementById(id)
         if (el) el.scrollIntoView({ behavior: "smooth" })
         else window.scrollTo({ top: 0, behavior: "smooth" })
       }
