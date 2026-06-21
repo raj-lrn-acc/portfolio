@@ -41,7 +41,9 @@
 
 	onDestroy(() => {
 		unsubMouse();
-		cancelAnimationFrame(animId);
+		if (typeof cancelAnimationFrame !== 'undefined') {
+			cancelAnimationFrame(animId);
+		}
 		renderer?.dispose();
 		composer?.dispose();
 	});
