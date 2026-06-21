@@ -8,6 +8,7 @@ export function Loader({ onEnter }: { onEnter: () => void }) {
   const [visible, setVisible] = useState(true)
   const [eyes, setEyes] = useState({ left: { x: 0, y: 0 }, right: { x: 0, y: 0 } })
   const containerRef = useRef<HTMLDivElement>(null)
+  const [, setHoveredBtn] = useState<string | false>(false)
 
   useEffect(() => {
     const t = setInterval(() => {
@@ -48,12 +49,12 @@ export function Loader({ onEnter }: { onEnter: () => void }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.8 } }}
-          className="fixed inset-0 z-[12000] bg-background flex flex-col items-center justify-center"
+          className="fixed inset-0 z-[12000] bg-background flex flex-col items-center justify-center select-none"
           ref={containerRef}
         >
           <div className="flex flex-col items-center relative">
             <div className="perspective-[32rem] mb-4">
-              <div className={`loader-box ${progress >= 100 ? "" : ""}`}>
+              <div className="loader-box">
                 {letters.map((l, i) => (
                   <div key={i} className="loader-box-face font-serif font-light">
                     {l}
@@ -63,12 +64,12 @@ export function Loader({ onEnter }: { onEnter: () => void }) {
             </div>
 
             <span className="text-sm tracking-tight uppercase mb-1 font-sans" style={{ color: "#424242" }}>
-              Unseen Studio®
+              Rajveer Singh&reg;
             </span>
             <p className="text-sm leading-snug mb-7 text-center max-w-xs font-sans" style={{ color: "#424242", letterSpacing: "-0.025rem" }}>
-              I bridge enterprise IT with modern development.
+              Enterprise infrastructure.
               <br />
-              IAM, automation, and full-stack tools.
+              IAM, automation &amp; full-stack.
             </p>
 
             {progress < 100 ? (
@@ -81,37 +82,52 @@ export function Loader({ onEnter }: { onEnter: () => void }) {
                 />
               </div>
             ) : (
-              <div className="flex flex-col items-center gap-4">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="flex flex-col items-center gap-4"
+              >
                 <motion.button
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
                   onClick={handleEnter}
-                  className="relative text-xs font-medium uppercase tracking-wider text-foreground bg-transparent border-0 cursor-pointer py-1 overflow-hidden group"
+                  onMouseEnter={() => setHoveredBtn("noaudio")}
+                  onMouseLeave={() => setHoveredBtn(false)}
+                  className="relative text-xs font-medium uppercase tracking-wider text-foreground bg-transparent border-0 py-1 overflow-hidden group"
+                  style={{ cursor: "none" }}
                 >
-                  Enter without audio
-                  <span className="btn-line btn-line-left absolute bottom-0 left-0 w-1/2 h-px bg-foreground" />
-                  <span className="btn-line btn-line-right absolute bottom-0 right-0 w-1/2 h-px bg-foreground" />
+                  <span className="relative z-10">Enter without audio</span>
+                  <span className="btn-line btn-line-left absolute bottom-0 left-0 w-1/2 h-px bg-foreground transition-transform duration-200" />
+                  <span className="btn-line btn-line-right absolute bottom-0 right-0 w-1/2 h-px bg-foreground transition-transform duration-200" />
                 </motion.button>
 
                 <motion.button
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
                   onClick={handleEnter}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-pink text-background text-xs font-medium uppercase tracking-wider rounded-full hover:opacity-90 transition-opacity"
+                  onMouseEnter={() => setHoveredBtn("enter")}
+                  onMouseLeave={() => setHoveredBtn(false)}
+                  className="inline-flex items-center gap-3 px-8 py-3.5 bg-pink text-background text-xs font-medium uppercase tracking-wider rounded-full hover:opacity-90 transition-all duration-300 shadow-lg shadow-pink/20"
+                  style={{ cursor: "none" }}
                 >
-                  Enter
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  Enter the experience
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="group-hover:translate-x-1 transition-transform">
                     <path d="M1 8h12M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </motion.button>
-              </div>
+
+                <p className="text-[10px] text-muted-foreground/50 mt-2 font-sans tracking-wider uppercase">
+                  Click or press any key
+                </p>
+              </motion.div>
             )}
           </div>
 
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-48">
-            <svg viewBox="0 0 311.3 233.3" className="w-full opacity-30">
+            <svg viewBox="0 0 311.3 233.3" className="w-full opacity-20">
               <defs>
                 <clipPath id="mask-left">
                   <path d="M139.5,101.5c2.5-7.8,6-14.8,10.3-21c-3.8-11.2-11.1-19-20.6-22c-2.8-0.9-5.6-1.3-8.5-1.3c-7,0-14.2,2.5-21,7.5C89.8,71.3,82.2,82.4,78,95.5c-4.1,13.1-4.3,26.5-0.4,37.9c3.8,11.2,11.1,19,20.6,22c9.4,3,19.9,0.8,29.5-6.1c3.5-2.5,6.7-5.6,9.6-9.1C134.6,128,135.3,114.6,139.5,101.5z" />
