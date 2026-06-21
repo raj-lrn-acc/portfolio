@@ -1,48 +1,33 @@
-import { useState, lazy, Suspense } from "react"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { Toaster } from "sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Analytics } from "@vercel/analytics/react"
-import { Navbar } from "@/components/navbar"
-import { Footer } from "@/components/footer"
-import { Cursor } from "@/components/cursor"
-import { SplashScreen } from "@/components/splash-screen"
-import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts"
-import { Hero } from "@/sections/hero"
-
-const About = lazy(() => import("@/sections/about").then((m) => ({ default: m.About })))
-const Projects = lazy(() => import("@/sections/projects").then((m) => ({ default: m.Projects })))
-const Contact = lazy(() => import("@/sections/contact").then((m) => ({ default: m.Contact })))
-
-function Lazy({ children }: { children: React.ReactNode }) {
-  return <Suspense fallback={null}>{children}</Suspense>
-}
+import { Header } from "@/components/Header"
+import { Footer } from "@/components/Footer"
+import { Home } from "@/pages/Home"
+import { Work } from "@/pages/Work"
+import { ProjectDetail } from "@/pages/ProjectDetail"
+import { About } from "@/pages/About"
+import { Contact } from "@/pages/Contact"
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState(true)
-
-  if (showSplash) {
-    return <SplashScreen onEnter={() => setShowSplash(false)} />
-  }
-
-  return <MainApp />
-}
-
-function MainApp() {
-  useKeyboardShortcuts()
-
   return (
-    <TooltipProvider delayDuration={200}>
-      <Analytics />
-      <Cursor />
-      <Navbar />
-      <main>
-        <Hero />
-        <Lazy><About /></Lazy>
-        <Lazy><Projects /></Lazy>
-        <Lazy><Contact /></Lazy>
-      </main>
-      <Footer />
-      <Toaster richColors position="bottom-right" />
-    </TooltipProvider>
+    <BrowserRouter>
+      <TooltipProvider delayDuration={200}>
+        <Analytics />
+        <Header />
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/work" element={<Work />} />
+            <Route path="/work/:slug" element={<ProjectDetail />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+          </Routes>
+        </main>
+        <Footer />
+        <Toaster richColors position="bottom-right" />
+      </TooltipProvider>
+    </BrowserRouter>
   )
 }
