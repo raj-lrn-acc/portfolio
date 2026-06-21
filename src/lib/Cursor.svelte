@@ -1,56 +1,30 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
-	import { cursorHover } from '$lib/stores';
-
-	let x = $state(-100);
-	let y = $state(-100);
-	let dot: HTMLDivElement;
-
-	let unsub: () => void;
-
-	onMount(() => {
-		const handleMove = (e: MouseEvent) => {
-			x = e.clientX;
-			y = e.clientY;
-		};
-
-		const over = () => { cursorHover.set(true); };
-		const out = () => { cursorHover.set(false); };
-
-		window.addEventListener('mousemove', handleMove, { passive: true });
-
-		const els = document.querySelectorAll('a, button, input, textarea, [role="button"]');
-		els.forEach((el) => {
-			el.addEventListener('mouseenter', over);
-			el.addEventListener('mouseleave', out);
-		});
-
-		document.body.style.cursor = 'none';
-		const style = document.createElement('style');
-		style.textContent = 'a, button, input, textarea, [role="button"] { cursor: none !important; }';
-		style.id = 'cursor-style';
-		document.head.appendChild(style);
-
-		return () => {
-			document.body.style.cursor = '';
-			style.remove();
-			window.removeEventListener('mousemove', handleMove);
-			els.forEach((el) => {
-				el.removeEventListener('mouseenter', over);
-				el.removeEventListener('mouseleave', out);
-			});
-		};
-	});
+	import { mouse, cursorHover } from '$lib/stores';
 </script>
 
-<div class="fixed top-0 left-0 pointer-events-none z-[99999] hidden md:block" style="transform: translate({x}px, {y}px)">
+<div class="pointer-events-none fixed inset-0 z-[9999]">
 	<div
-		bind:this={dot}
-		class="-translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#efded9] transition-all duration-150 ease-out"
-		class:scale-150={$cursorHover}
+		class="absolute rounded-full -translate-x-1/2 -translate-y-1/2 mix-blend-difference"
+		style="
+			width: {$cursorHover ? 32 : 6}px;
+			height: {$cursorHover ? 32 : 6}px;
+			left: {$mouse.x * 100}vw;
+			top: {$mouse.y * 100}vh;
+			background: white;
+			transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	"
 	></div>
 	<div
-		class="-translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-[#efded9]/30 absolute transition-all duration-150 ease-out"
-		class:scale-75={$cursorHover}
+		class="absolute rounded-full -translate-x-1/2 -translate-y-1/2 border pointer-events-none"
+		style="
+			width: {$cursorHover ? 48 : 28}px;
+			height: {$cursorHover ? 48 : 28}px;
+			left: {$mouse.x * 100}vw;
+			top: {$mouse.y * 100}vh;
+			border-color: rgba(255, 255, 255, {$cursorHover ? 0.6 : 0.3});
+			transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+						height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+						border-color 0.4s ease;
+	"
 	></div>
 </div>

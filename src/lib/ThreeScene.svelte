@@ -1,5 +1,10 @@
 <script lang="ts">
+	import { onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
+	import { get } from 'svelte/store';
+	import { viewState, detailProject } from '$lib/stores';
+	import { projects } from '$lib/data';
+	import type { Project } from '$lib/data';
 
 	let cleanup: (() => void) | undefined;
 
@@ -7,213 +12,256 @@
 		if (!browser) return;
 
 		let animId: number;
-		let scene: any, camera: any, renderer: any, composer: any;
-		let particles: any, shapes: any, torusKnot: any, rings: any;
-		let isDragging = false, prevX = 0, prevY = 0, velX = 0, velY = 0, dragRotX = 0, dragRotY = 0;
-		let mouseX = 1, mouseY = 0;
-		let time = 0;
+		let THREE: typeof import('three');
+		let pp: typeof import('postprocessing');
+		let createBrain: typeof import('$lib/brain').createProceduralBrain;
 
-		async function init() {
-			const THREE = await import('three');
-			const pp = await import('postprocessing');
+		async function initThree() {
+			THREE = await import('three');
+			pp = await import('postprocessing');
+			const brainMod = await import('$lib/brain');
+			createBrain = brainMod.createProceduralBrain;
+			setupScene();
+		}
+		initThree();
 
-			const w = window.innerWidth;
-			const h = window.innerHeight;
+		function setupScene() {
+			const w = window.innerWidth, h = window.innerHeight;
 
-			scene = new THREE.Scene();
-			camera = new THREE.PerspectiveCamera(65, w / h, 0.1, 50);
-			camera.position.set(0, 0, 6);
+			const scene = new THREE.Scene();
+			const camera = new THREE.PerspectiveCamera(55, w / h, 0.1, 80);
+			camera.position.set(0, 0.5, 7);
 
-			renderer = new THREE.WebGLRenderer({
-				canvas: node,
-				antialias: true,
-				alpha: true,
-				powerPreference: 'high-performance'
-			});
+			const renderer = new THREE.WebGLRenderer({ canvas: node, antialias: true, alpha: true, powerPreference: 'high-performance' });
 			renderer.setSize(w, h);
 			renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
-			renderer.setClearColor(0x212121, 0);
+			renderer.setClearColor(0x0a0a0a, 1);
 
-			composer = new pp.EffectComposer(renderer);
+			const composer = new pp.EffectComposer(renderer);
 			composer.addPass(new pp.RenderPass(scene, camera));
-			composer.addPass(new pp.EffectPass(camera, new pp.BloomEffect({
-				intensity: 0.25, radius: 0.5, threshold: 0.6
-			})));
+			composer.addPass(new pp.EffectPass(camera, new pp.BloomEffect({ intensity: 0.35, radius: 0.6, threshold: 0.4 })));
 
-			scene.add(new THREE.AmbientLight(0xffffff, 0.2));
-			const l1 = new THREE.PointLight(0xefded9, 0.4, 20);
-			l1.position.set(5, 5, 5);
-			scene.add(l1);
-			const l2 = new THREE.PointLight(0xffffff, 0.2, 20);
-			l2.position.set(-5, -3, -5);
-			scene.add(l2);
+			scene.add(new THREE.AmbientLight(0xffffff, 0.25));
 
-			const pCount = 2000;
+			const key = new THREE.DirectionalLight(0xe0e0e0, 0.6);
+			key.position.set(5, 8, 6);
+			scene.add(key);
+			const fill = new THREE.DirectionalLight(0x808080, 0.2);
+			fill.position.set(-4, -2, -5);
+			scene.add(fill);
+			const rim = new THREE.DirectionalLight(0xffffff, 0.15);
+			rim.position.set(0, -5, -4);
+			scene.add(rim);
+
+			const pCount = 1500;
 			const pGeo = new THREE.BufferGeometry();
 			const pPos = new Float32Array(pCount * 3);
 			const pSiz = new Float32Array(pCount);
 			for (let i = 0; i < pCount; i++) {
 				pPos[i * 3] = (Math.random() - 0.5) * 40;
 				pPos[i * 3 + 1] = (Math.random() - 0.5) * 30;
-				pPos[i * 3 + 2] = (Math.random() - 0.5) * 30 - 5;
-				pSiz[i] = 0.01 + Math.random() * 0.04;
+				pPos[i * 3 + 2] = (Math.random() - 0.5) * 20 - 5;
+				pSiz[i] = 0.02 + Math.random() * 0.05;
 			}
 			pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
 			pGeo.setAttribute('size', new THREE.BufferAttribute(pSiz, 1));
-			particles = new THREE.Points(pGeo, new THREE.PointsMaterial({
-				color: 0xefded9, size: 0.04, transparent: true, opacity: 0.3,
-				sizeAttenuation: true, blending: THREE.AdditiveBlending, depthWrite: false
-			}));
+			const pMat = new THREE.PointsMaterial({ color: 0xe0e0e0, size: 0.04, transparent: true, opacity: 0.4, sizeAttenuation: true, blending: THREE.AdditiveBlending, depthWrite: false });
+			const particles = new THREE.Points(pGeo, pMat);
 			scene.add(particles);
 
-			shapes = new THREE.Group();
-			const colors = [0xefded9, 0xd4c4bc, 0xc4b4ac, 0xe8d8d0, 0xf0e0d8];
-			for (let i = 0; i < 10; i++) {
+			const brainMat = new THREE.MeshPhysicalMaterial({ color: 0xdddddd, metalness: 0.2, roughness: 0.06, clearcoat: 0.6, clearcoatRoughness: 0.2, transparent: true, opacity: 0, emissive: 0x444444, emissiveIntensity: 0.1 });
+			const brain = createBrain(brainMat);
+			brain.position.set(0, -0.2, 0);
+			brain.scale.setScalar(0);
+			scene.add(brain);
+
+			const ringMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.06, side: THREE.DoubleSide, depthWrite: false });
+			const ring = new THREE.Mesh(new THREE.RingGeometry(3.6, 3.7, 64), ringMat);
+			ring.rotation.x = -Math.PI / 2.5;
+			ring.position.y = -0.5;
+			scene.add(ring);
+
+			const cardMeshes: THREE.Mesh[] = [];
+			const cardGroups: THREE.Group[] = [];
+			const cardVerts: { theta: number; y: number }[] = [];
+
+			function cardTex(p: Project) {
+				const c = document.createElement('canvas');
+				c.width = 400; c.height = 260;
+				const ctx = c.getContext('2d')!;
+				ctx.fillStyle = '#141414';
+				ctx.beginPath(); ctx.roundRect(0, 0, 400, 260, 14); ctx.fill();
+				ctx.fillStyle = '#1c1c1c';
+				ctx.beginPath(); ctx.roundRect(0, 0, 400, 90, [14, 14, 0, 0]); ctx.fill();
+				ctx.fillStyle = p.color;
+				ctx.fillRect(0, 0, 4, 90);
+				ctx.fillStyle = '#e0e0e0';
+				ctx.font = '500 22px "Inter", sans-serif';
+				ctx.fillText(p.title, 22, 40);
+				ctx.fillStyle = '#777';
+				ctx.font = '300 14px "Inter", sans-serif';
+				ctx.fillText(p.tagline, 22, 66);
+				p.tags.forEach((tag, i) => {
+					const x = 22 + i * (tag.length * 9 + 32);
+					ctx.fillStyle = '#2a2a2a';
+					ctx.beginPath(); ctx.roundRect(x, 106, tag.length * 9 + 20, 24, 12); ctx.fill();
+					ctx.fillStyle = '#999';
+					ctx.font = '12px "Inter", sans-serif';
+					ctx.fillText(tag, x + 10, 122);
+				});
+				ctx.fillStyle = '#444';
+				ctx.font = '300 13px "Inter", sans-serif';
+				ctx.fillText(p.description.length > 100 ? p.description.slice(0, 97) + '...' : p.description, 22, 154);
+				return new THREE.CanvasTexture(c);
+			}
+
+			projects.forEach((p, i) => {
+				const tex = cardTex(p);
+				tex.needsUpdate = true;
 				const mesh = new THREE.Mesh(
-					new THREE.IcosahedronGeometry(0.3, 0),
-					new THREE.MeshPhysicalMaterial({
-						color: colors[i % colors.length], transparent: true,
-						opacity: 0.06 + Math.random() * 0.08, wireframe: true,
-						metalness: 0.4, roughness: 0.3
-					})
+					new THREE.PlaneGeometry(2.4, 1.6),
+					new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide })
 				);
-				mesh.position.set((Math.random() - 0.5) * 12, (Math.random() - 0.5) * 8, -2 - Math.random() * 8);
-				mesh.scale.setScalar(0.5 + Math.random() * 1);
-				mesh.userData = {
-					rotSpeed: 0.003 + Math.random() * 0.012,
-					basePos: mesh.position.clone(),
-					depthFactor: 1 + mesh.position.z * 0.06
-				};
-				shapes.add(mesh);
-			}
-			scene.add(shapes);
-
-			torusKnot = new THREE.Mesh(
-				new THREE.TorusKnotGeometry(1.4, 0.4, 128, 16),
-				new THREE.MeshPhysicalMaterial({
-					color: 0xefded9, metalness: 0.2, roughness: 0.1,
-					transparent: true, opacity: 0.1, wireframe: true,
-					emissive: 0xefded9, emissiveIntensity: 0.06
-				})
-			);
-			torusKnot.position.set(0, 0, -2);
-			scene.add(torusKnot);
-
-			rings = new THREE.Group();
-			rings.position.set(0, 0, -3);
-			for (let i = 0; i < 6; i++) {
-				const ring = new THREE.Mesh(
-					new THREE.RingGeometry(1.8 + i * 0.3, 1.82 + i * 0.3, 80),
-					new THREE.MeshBasicMaterial({
-						color: 0xefded9, transparent: true,
-						opacity: 0.025 + i * 0.015, side: THREE.DoubleSide, depthWrite: false
-					})
-				);
-				ring.rotation.x = Math.PI / 2 + (i / 6) * 0.3;
-				ring.rotation.y = (i / 6) * Math.PI;
-				rings.add(ring);
-			}
-			scene.add(rings);
-
-			// Events
-			node.addEventListener('pointerdown', (e: PointerEvent) => {
-				isDragging = true; prevX = e.clientX; prevY = e.clientY;
-				velX = 0; velY = 0;
-				node.setPointerCapture(e.pointerId);
+				mesh.userData.projectId = p.id;
+				const angle = (i / projects.length) * Math.PI * 2;
+				const yOff = (i % 3 - 1) * 1.0;
+				const group = new THREE.Group();
+				group.add(mesh);
+				group.position.set(Math.sin(angle) * 3.8, yOff, Math.cos(angle) * 3.8);
+				cardVerts.push({ theta: angle, y: yOff });
+				cardMeshes.push(mesh);
+				cardGroups.push(group);
+				scene.add(group);
 			});
 
+			const cpCount = 800;
+			const cpPos = new Float32Array(cpCount * 3);
+			for (let i = 0; i < cpCount; i++) {
+				const theta = Math.random() * Math.PI * 2;
+				const phi = Math.acos(2 * Math.random() - 1);
+				const r = 2 + Math.random() * 1.5;
+				cpPos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+				cpPos[i * 3 + 1] = r * Math.cos(phi) * 0.4;
+				cpPos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+			}
+			const cpGeo = new THREE.BufferGeometry();
+			cpGeo.setAttribute('position', new THREE.BufferAttribute(cpPos, 3));
+			const cpMat = new THREE.PointsMaterial({ color: 0xe0e0e0, size: 0.03, transparent: true, opacity: 0, sizeAttenuation: true, blending: THREE.AdditiveBlending, depthWrite: false });
+			const contactP = new THREE.Points(cpGeo, cpMat);
+			scene.add(contactP);
+
+			let currentState = 'home';
+			let bOp = 0, bSc = 0, cOp = 0, ctOp = 0;
+			let rotY = 0, spd = 0.004, drag = 0;
+			let dragging = false, px = 0, py = 0, totalMoved = 0, time = 0;
+
+			const raycaster = new THREE.Raycaster();
+			const ptr = new THREE.Vector2();
+
+			const onDown = (e: PointerEvent) => {
+				if (get(detailProject) !== null) return;
+				if (currentState !== 'projects') return;
+				dragging = true; px = e.clientX; py = e.clientY; totalMoved = 0; drag = 0;
+				node.setPointerCapture(e.pointerId);
+			};
 			const onMove = (e: PointerEvent) => {
-				mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-				mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-				if (isDragging) {
-					const dx = e.clientX - prevX;
-					const dy = e.clientY - prevY;
-					dragRotY += dx * 0.005;
-					dragRotX += dy * 0.005;
-					velX = dx * 0.3; velY = dy * 0.3;
-					prevX = e.clientX; prevY = e.clientY;
+				if (!dragging || currentState !== 'projects') return;
+				const dx = e.clientX - px;
+				const dy = e.clientY - py;
+				totalMoved += Math.abs(dx);
+				drag = dx * 0.008;
+				rotY += drag;
+				px = e.clientX; py = e.clientY;
+			};
+			const onUp = (e: PointerEvent) => {
+				dragging = false;
+				if (currentState !== 'projects' || get(detailProject) !== null) return;
+				if (totalMoved > 5) return;
+				const rect = node.getBoundingClientRect();
+				ptr.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+				ptr.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+				raycaster.setFromCamera(ptr, camera);
+				const hits = raycaster.intersectObjects(cardMeshes);
+				if (hits.length > 0 && hits[0].object.userData.projectId) {
+					detailProject.set(hits[0].object.userData.projectId);
 				}
 			};
-			const onUp = () => { isDragging = false; };
+
+			node.addEventListener('pointerdown', onDown);
 			window.addEventListener('pointermove', onMove);
 			window.addEventListener('pointerup', onUp);
 
 			const onResize = () => {
-				const w = window.innerWidth;
-				const h = window.innerHeight;
-				camera.aspect = w / h;
+				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
-				renderer.setSize(w, h);
-				composer.setSize(w, h);
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				composer.setSize(window.innerWidth, window.innerHeight);
 			};
-			window.addEventListener('resize', onResize);
 
-			function animate() {
-				animId = requestAnimationFrame(animate);
-				time += 0.01;
+			const unsubView = viewState.subscribe(s => { currentState = s; });
+			const unsubDet = detailProject.subscribe(() => {});
 
-				if (!isDragging) {
-					velX *= 0.92; velY *= 0.92;
-					dragRotY += velX * 0.002;
-					dragRotX += velY * 0.002;
+			function loop() {
+				animId = requestAnimationFrame(loop);
+				time += 0.016;
+
+				const t = 0.04;
+				if (currentState === 'home') {
+					bOp += (0 - bOp) * t; bSc += (0 - bSc) * t; cOp += (0 - cOp) * t; ctOp += (0 - ctOp) * t;
+					pMat.opacity += (0.25 - pMat.opacity) * t;
+				} else if (currentState === 'projects') {
+					bOp += (1 - bOp) * t; bSc += (1 - bSc) * t; cOp += (1 - cOp) * t; ctOp += (0 - ctOp) * t;
+					pMat.opacity += (0.1 - pMat.opacity) * t;
+				} else {
+					bOp += (0 - bOp) * t; bSc += (0 - bSc) * t; cOp += (0 - cOp) * t; ctOp += (1 - ctOp) * t;
+					pMat.opacity += (0.35 - pMat.opacity) * t;
 				}
 
-				scene.rotation.x += (dragRotX - scene.rotation.x) * 0.06;
-				scene.rotation.y += (dragRotY - scene.rotation.y) * 0.06;
+				brainMat.opacity = bOp;
+				brain.scale.setScalar(bSc < 0.01 ? 0 : bSc);
+				cardMeshes.forEach(m => { m.material.opacity = cOp; });
+				cpMat.opacity = ctOp;
 
-				if (particles) {
-					particles.rotation.y = time * 0.003;
-					particles.rotation.x = mouseY * 0.005;
+				if (bSc > 0.01) {
+					const br = 1 + Math.sin(time * 0.8) * 0.008;
+					brain.scale.setScalar(bSc * br);
+					brain.position.y = -0.2 + Math.sin(time * 0.5) * 0.03;
+					brainMat.emissiveIntensity = 0.08 + Math.sin(time * 1.2) * 0.04;
 				}
 
-				if (shapes?.children) {
-					(shapes.children as any[]).forEach((mesh: any) => {
-						const ud = mesh.userData;
-						if (!ud.basePos) return;
-						const df = ud.depthFactor || 1;
-						mesh.position.x = ud.basePos.x + mouseX * df * 1.2;
-						mesh.position.y = ud.basePos.y + mouseY * df * 1.0;
-						mesh.rotation.x += ud.rotSpeed * 0.6;
-						mesh.rotation.y += ud.rotSpeed;
-					});
-				}
+				if (!dragging) drag *= 0.92;
+				rotY += spd + drag;
+				brain.rotation.y = rotY;
 
-				if (torusKnot) {
-					torusKnot.position.x = mouseX * 0.5;
-					torusKnot.position.y = mouseY * 0.4;
-					torusKnot.rotation.x = time * 0.15 + mouseY * 0.08;
-					torusKnot.rotation.y = time * 0.1 + mouseX * 0.08;
-					torusKnot.position.y += Math.sin(time * 3) * 0.1;
-				}
+				cardGroups.forEach((g, i) => {
+					const a = (i / projects.length) * Math.PI * 2 + rotY;
+					const r = 3.8 + Math.sin(time * 0.3 + i) * 0.05;
+					const y = cardVerts[i].y + Math.sin(time * 0.4 + i * 0.7) * 0.05;
+					g.position.set(Math.sin(a) * r, y, Math.cos(a) * r);
+					g.lookAt(camera.position);
+				});
 
-				if (rings) {
-					rings.rotation.x = Math.sin(time * 0.06) * 0.08 + mouseY * 0.03;
-					rings.rotation.y = time * 0.04 + mouseX * 0.03;
-				}
-
+				ring.rotation.z = rotY * 0.1;
+				ring.material.opacity = Math.max(bOp * 0.06, 0.02);
+				particles.rotation.y = time * 0.002;
+				contactP.rotation.y = time * 0.15;
 				composer.render();
 			}
-
-			animate();
+			loop();
 
 			cleanup = () => {
 				cancelAnimationFrame(animId);
+				node.removeEventListener('pointerdown', onDown);
+				node.removeEventListener('pointerup', onUp);
 				window.removeEventListener('pointermove', onMove);
-				window.removeEventListener('pointerup', onUp);
 				window.removeEventListener('resize', onResize);
-				renderer?.dispose();
-				composer?.dispose();
+				unsubView(); unsubDet();
+				renderer?.dispose(); composer?.dispose();
 			};
 		}
-
-		init();
-
-		return {
-			destroy() {
-				cleanup?.();
-			}
-		};
 	}
+
+	onDestroy(() => { cleanup?.(); });
 </script>
 
 <canvas use:mountCanvas class="fixed inset-0 z-0 touch-none" style="touch-action: none"></canvas>

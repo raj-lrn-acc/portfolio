@@ -1,36 +1,35 @@
 <script lang="ts">
-	import '../app.css';
+	import { loaderVisible, cursorHover } from '$lib/stores';
 	import ThreeScene from '$lib/ThreeScene.svelte';
-	import Loader from '$lib/Loader.svelte';
-	import Cursor from '$lib/Cursor.svelte';
 	import Header from '$lib/Header.svelte';
-	import { loaderVisible } from '$lib/stores';
+	import Footer from '$lib/Footer.svelte';
+	import Cursor from '$lib/Cursor.svelte';
+	import Loader from '$lib/Loader.svelte';
+	import { page } from '$app/stores';
+	import { onNavigate } from '$app/navigation';
+	import { fly } from 'svelte/transition';
 
 	let { children } = $props();
+	let transitioning = $state(false);
 
-	let showLoader = $state(true);
-
-	function handleEnter() {
-		showLoader = false;
-	}
+	onNavigate(() => {
+		transitioning = true;
+		setTimeout(() => { transitioning = false; }, 400);
+	});
 </script>
 
+<Loader />
 <Cursor />
-
-{#if showLoader}
-	<Loader onEnter={handleEnter} />
-{/if}
-
-<div class="min-h-screen" style="transition: opacity 0.8s; opacity: {showLoader ? 0 : 1}">
-	<ThreeScene />
-	<Header />
-
-	<main class="relative z-10">
-		{#key $loaderVisible}
+<ThreeScene />
+<Header />
+<main class="relative z-10 min-h-screen">
+	{#key $page.url.pathname}
+		<div
+			class="animate-in"
+			style="animation: fade-up 0.5s ease-out"
+		>
 			{@render children()}
-		{/key}
-	</main>
-</div>
-
-<style>
-</style>
+		</div>
+	{/key}
+</main>
+<Footer />
