@@ -1,8 +1,7 @@
 import { useEffect } from "react"
 
 const sections = [
-  "hero", "specs", "features", "stack",
-  "testimonials", "projects", "changelog", "contact",
+  "hero", "about", "projects", "contact",
 ] as const
 
 export function useKeyboardShortcuts() {

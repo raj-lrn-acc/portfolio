@@ -1,138 +1,107 @@
 import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Send, Mail } from "lucide-react"
-import { GithubIcon, LinkedinIcon } from "@/components/icons"
+import { Mail, MapPin, ArrowUpRight } from "lucide-react"
 
 export function Contact() {
   return (
-    <section id="contact" className="py-24 md:py-32 px-6">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.5 }}
-          className="mb-4"
-        >
-          <span className="text-xs font-mono text-primary tracking-wider uppercase">// deploy message</span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mt-2">
-            Deploy Message
-          </h2>
-          <p className="text-muted-foreground font-mono text-sm mt-2">
-            {`/* Ready to ship? Send a payload. I'll respond within 24-48 business hours. */`}
-          </p>
-        </motion.div>
+    <section id="contact" className="py-32 md:py-40 px-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
+          <div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6 }}
+              className="text-xs font-sans tracking-[0.25em] uppercase text-muted-foreground mb-6"
+            >
+              Contact
+            </motion.p>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="font-serif text-4xl sm:text-5xl md:text-6xl leading-[1.1] tracking-tight mb-8"
+            >
+              Say hello
+              <br />
+              <span className="italic text-muted-foreground">I look forward to hearing from you</span>
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-muted-foreground max-w-md leading-relaxed mb-10"
+            >
+              Have a question, opportunity, or just want to connect? 
+              I'm always open to talking about IT, automation, or new projects.
+            </motion.p>
 
-        <div className="grid lg:grid-cols-2 gap-10 mt-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="space-y-4"
+            >
+              <a
+                href="mailto:rajveercanada2@gmail.com"
+                className="group inline-flex items-center gap-3 text-sm font-sans tracking-wider text-foreground/60 hover:text-foreground transition-colors"
+              >
+                <Mail className="h-4 w-4" />
+                rajveercanada2@gmail.com
+                <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </a>
+              <div className="inline-flex items-center gap-3 text-sm font-sans tracking-wider text-muted-foreground">
+                <MapPin className="h-4 w-4" />
+                Toronto, Canada
+              </div>
+            </motion.div>
+          </div>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <div className="border rounded-2xl overflow-hidden bg-card">
-              <div className="flex items-center gap-1.5 px-4 py-2.5 border-b bg-muted/30">
-                <span className="w-2.5 h-2.5 rounded-full bg-destructive/60" />
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-400/60" />
-                <span className="w-2.5 h-2.5 rounded-full bg-neon-green/60" />
-                <span className="text-xs font-mono text-muted-foreground ml-2">
-                  contact.sh
-                </span>
-              </div>
-              <form
-                action="https://formspree.io/f/your-form-id"
-                method="POST"
-                className="p-6 space-y-4 font-mono text-sm"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-primary">$</span>
-                  <span className="text-muted-foreground">./send-message.sh --name</span>
-                </div>
+            <form
+              action="https://formspree.io/f/your-form-id"
+              method="POST"
+              className="space-y-5"
+            >
+              <div className="grid sm:grid-cols-2 gap-5">
                 <input
                   type="text"
                   name="name"
-                  placeholder="your_name"
+                  placeholder="Name"
                   required
-                  className="w-full px-4 py-3 rounded-xl border bg-background text-foreground text-sm outline-none focus:ring-2 focus:ring-primary transition-shadow font-mono"
+                  className="w-full px-0 py-3 bg-transparent border-b border-border text-foreground text-sm font-sans outline-none transition-colors focus:border-foreground placeholder:text-muted-foreground/30"
                 />
-                <div className="flex items-center gap-2">
-                  <span className="text-primary">$</span>
-                  <span className="text-muted-foreground">./send-message.sh --email</span>
-                </div>
                 <input
                   type="email"
                   name="email"
-                  placeholder="your@email.com"
+                  placeholder="Email"
                   required
-                  className="w-full px-4 py-3 rounded-xl border bg-background text-foreground text-sm outline-none focus:ring-2 focus:ring-primary transition-shadow font-mono"
+                  className="w-full px-0 py-3 bg-transparent border-b border-border text-foreground text-sm font-sans outline-none transition-colors focus:border-foreground placeholder:text-muted-foreground/30"
                 />
-                <div className="flex items-center gap-2">
-                  <span className="text-primary">$</span>
-                  <span className="text-muted-foreground">cat &gt; message.txt</span>
-                </div>
-                <textarea
-                  name="message"
-                  placeholder="Your message here..."
-                  rows={4}
-                  required
-                  className="w-full px-4 py-3 rounded-xl border bg-background text-foreground text-sm outline-none focus:ring-2 focus:ring-primary transition-shadow font-mono resize-none"
-                />
-                <Button type="submit" className="w-full rounded-xl font-mono text-sm gap-2 h-11">
-                  <Send className="h-4 w-4" />
-                  Send Message &gt;&gt;
-                </Button>
-                <p className="text-[10px] text-muted-foreground/50 text-center">
-                  Exit code: 0 (success) | Response time: O(n) where n = business days
-                </p>
-              </form>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="flex flex-col justify-center gap-6"
-          >
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Have a question, opportunity, or just want to say hi? Drop a message.
-              I'm always open to talking about IT, automation, or new projects.
-            </p>
-
-            <div className="space-y-3 font-mono text-sm">
-              <div className="flex items-center gap-3">
-                <Mail className="h-4 w-4 text-primary" />
-                <a
-                  href="mailto:rajveercanada2@gmail.com"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  rajveercanada2@gmail.com
-                </a>
               </div>
-              <div className="flex items-center gap-3">
-                <GithubIcon className="h-4 w-4 text-primary" />
-                <a
-                  href="https://github.com/Xqni"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  github.com/Xqni
-                </a>
-              </div>
-              <div className="flex items-center gap-3">
-                <LinkedinIcon className="h-4 w-4 text-primary" />
-                <a
-                  href="https://www.linkedin.com/in/rajveer-singh-pwgi"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  linkedin.com/in/rajveer-singh-pwgi
-                </a>
-              </div>
-            </div>
+              <textarea
+                name="message"
+                placeholder="Message"
+                rows={4}
+                required
+                className="w-full px-0 py-3 bg-transparent border-b border-border text-foreground text-sm font-sans outline-none transition-colors focus:border-foreground placeholder:text-muted-foreground/30 resize-none"
+              />
+              <button
+                type="submit"
+                className="group inline-flex items-center gap-3 text-xs font-sans tracking-[0.2em] uppercase text-foreground/60 hover:text-foreground transition-colors pt-2"
+              >
+                <span className="w-8 h-px bg-foreground/30 group-hover:w-12 group-hover:bg-foreground transition-all duration-300" />
+                Send Message
+              </button>
+            </form>
           </motion.div>
         </div>
       </div>

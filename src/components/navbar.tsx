@@ -1,16 +1,9 @@
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import { ModeToggle } from "@/components/mode-toggle"
-import { Menu } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 
 const navLinks = [
-  { href: "#specs", label: "Specs" },
-  { href: "#features", label: "Features" },
-  { href: "#stack", label: "Stack" },
+  { href: "#about", label: "About" },
   { href: "#projects", label: "Projects" },
-  { href: "#changelog", label: "Changelog" },
   { href: "#contact", label: "Contact" },
 ]
 
@@ -20,7 +13,6 @@ export function Navbar() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
-
     const sections = navLinks.map((l) => document.getElementById(l.href.slice(1))).filter(Boolean) as HTMLElement[]
     const observer = new IntersectionObserver(
       (entries) => {
@@ -32,73 +24,36 @@ export function Navbar() {
     )
     sections.forEach((s) => observer.observe(s))
     window.addEventListener("scroll", onScroll)
-    return () => {
-      window.removeEventListener("scroll", onScroll)
-      observer.disconnect()
-    }
+    return () => { window.removeEventListener("scroll", onScroll); observer.disconnect() }
   }, [])
 
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled ? "bg-background/80 backdrop-blur-md border-b" : "bg-transparent"
+        "fixed top-0 left-0 right-0 z-40 transition-all duration-500",
+        scrolled ? "bg-background/90 backdrop-blur-md" : "bg-transparent"
       )}
     >
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-16">
-        <a href="#" className="text-lg font-bold tracking-tight font-mono">
-          rajveer<span className="text-primary">.dev</span>
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 h-16 sm:h-20">
+        <a href="#" className="text-xs sm:text-sm font-sans tracking-[0.2em] uppercase text-foreground/80 hover:text-foreground transition-colors">
+          Rajveer Singh
         </a>
-
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden sm:flex items-center gap-8">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              aria-current={activeSection === link.href.slice(1) ? "true" : undefined}
               className={cn(
-                "text-sm font-mono transition-colors",
+                "text-xs tracking-[0.15em] uppercase transition-colors",
                 activeSection === link.href.slice(1)
-                  ? "text-foreground font-medium"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "text-foreground"
+                  : "text-foreground/40 hover:text-foreground/70"
               )}
             >
               {link.label}
             </a>
           ))}
-          <ModeToggle />
         </nav>
-
-        <div className="flex items-center gap-2 md:hidden">
-          <ModeToggle />
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Open menu">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[250px] sm:w-[300px]">
-              <SheetTitle className="sr-only">Navigation</SheetTitle>
-              <nav className="flex flex-col gap-4 mt-8">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    aria-current={activeSection === link.href.slice(1) ? "true" : undefined}
-                    className={cn(
-                      "text-sm font-mono transition-colors",
-                      activeSection === link.href.slice(1)
-                        ? "text-foreground font-medium"
-                        : "text-muted-foreground hover:text-foreground"
-                    )}
-                  >
-                    {link.label}
-                  </a>
-                ))}
-              </nav>
-            </SheetContent>
-          </Sheet>
-        </div>
       </div>
     </header>
   )
