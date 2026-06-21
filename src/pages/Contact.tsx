@@ -2,6 +2,8 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { Footer } from "@/components/Footer"
 
+const ease = [0.25, 0.1, 0.25, 1] as const
+
 export default function Contact() {
   const [mode, setMode] = useState<"business" | "general">("business")
   const [formData, setFormData] = useState({ name: "", email: "", message: "" })
@@ -22,73 +24,45 @@ export default function Contact() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease }}
           className="mb-16"
         >
-          <p className="text-xs tracking-[0.3em] uppercase text-muted-foreground mb-4 font-sans">
-            Contact
-          </p>
-          <h1 className="text-5xl sm:text-7xl font-serif tracking-tight leading-[0.9] mb-6">
-            Get in touch
-          </h1>
+          <p className="text-xs tracking-[0.3em] uppercase text-white/50 mb-4 font-sans">Contact</p>
+          <h1 className="text-5xl sm:text-7xl font-serif tracking-tight leading-[0.9] text-white mb-6">Get in touch</h1>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-12">
-          {/* Left - Info */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.2, duration: 0.6, ease }}
             className="md:col-span-2 space-y-8"
           >
             <div>
-              <h3 className="text-xs tracking-widest uppercase text-muted-foreground mb-2 font-sans">
-                Location
-              </h3>
-              <p className="text-sm font-sans leading-relaxed">
-                Toronto, Ontario
-                <br />
-                Canada
-              </p>
+              <h3 className="text-xs tracking-widest uppercase text-white/40 mb-2 font-sans">Location</h3>
+              <p className="text-sm text-white/70 font-sans leading-relaxed">Toronto, Ontario<br />Canada</p>
             </div>
             <div>
-              <h3 className="text-xs tracking-widest uppercase text-muted-foreground mb-2 font-sans">
-                Email
-              </h3>
-              <a
-                href="mailto:rajveercanada2@gmail.com"
-                className="text-sm text-pink hover:underline underline-offset-4 font-sans"
-              >
-                rajveercanada2@gmail.com
-              </a>
+              <h3 className="text-xs tracking-widest uppercase text-white/40 mb-2 font-sans">Email</h3>
+              <a href="mailto:rajveercanada2@gmail.com" className="text-sm text-pink hover:underline underline-offset-4 font-sans">rajveercanada2@gmail.com</a>
             </div>
             <div>
-              <h3 className="text-xs tracking-widest uppercase text-muted-foreground mb-2 font-sans">
-                GitHub
-              </h3>
-              <a
-                href="https://github.com/Xqni"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-pink hover:underline underline-offset-4 font-sans"
-              >
-                github.com/Xqni
-              </a>
+              <h3 className="text-xs tracking-widest uppercase text-white/40 mb-2 font-sans">GitHub</h3>
+              <a href="https://github.com/Xqni" target="_blank" rel="noopener noreferrer" className="text-sm text-pink hover:underline underline-offset-4 font-sans">github.com/Xqni</a>
             </div>
           </motion.div>
 
-          {/* Right - Form */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.3, duration: 0.6, ease }}
             className="md:col-span-3"
           >
-            {/* Toggle */}
-            <div className="flex items-center gap-0 mb-8 border border-border rounded-full overflow-hidden w-fit">
+            <div className="flex items-center gap-0 mb-8 border border-white/20 rounded-full overflow-hidden w-fit">
               <button
                 onClick={() => setMode("business")}
                 className={`px-5 py-2 text-xs font-sans uppercase tracking-wider transition-colors ${
-                  mode === "business" ? "bg-foreground text-background" : "bg-transparent text-muted-foreground"
+                  mode === "business" ? "bg-pink text-background" : "bg-transparent text-white/50"
                 }`}
               >
                 New Business
@@ -96,7 +70,7 @@ export default function Contact() {
               <button
                 onClick={() => setMode("general")}
                 className={`px-5 py-2 text-xs font-sans uppercase tracking-wider transition-colors ${
-                  mode === "general" ? "bg-foreground text-background" : "bg-transparent text-muted-foreground"
+                  mode === "general" ? "bg-pink text-background" : "bg-transparent text-white/50"
                 }`}
               >
                 General
@@ -104,39 +78,33 @@ export default function Contact() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <input
-                  type="text"
-                  placeholder="Name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                  className="w-full bg-transparent border-b border-border pb-3 text-sm font-sans text-foreground placeholder:text-muted-foreground outline-none focus:border-pink transition-colors"
-                />
-              </div>
-              <div>
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                  className="w-full bg-transparent border-b border-border pb-3 text-sm font-sans text-foreground placeholder:text-muted-foreground outline-none focus:border-pink transition-colors"
-                />
-              </div>
-              <div>
-                <textarea
-                  placeholder={mode === "business" ? "Tell me about your project..." : "Your message..."}
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  required
-                  rows={4}
-                  className="w-full bg-transparent border-b border-border pb-3 text-sm font-sans text-foreground placeholder:text-muted-foreground outline-none focus:border-pink transition-colors resize-none"
-                />
-              </div>
+              <input
+                type="text"
+                placeholder="Name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+                className="w-full bg-transparent border-b border-white/20 pb-3 text-sm font-sans text-white placeholder:text-white/30 outline-none focus:border-pink transition-colors"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+                className="w-full bg-transparent border-b border-white/20 pb-3 text-sm font-sans text-white placeholder:text-white/30 outline-none focus:border-pink transition-colors"
+              />
+              <textarea
+                placeholder={mode === "business" ? "Tell me about your project..." : "Your message..."}
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                required
+                rows={4}
+                className="w-full bg-transparent border-b border-white/20 pb-3 text-sm font-sans text-white placeholder:text-white/30 outline-none focus:border-pink transition-colors resize-none"
+              />
               <button
                 type="submit"
-                className="group inline-flex items-center gap-2 bg-pink text-background px-8 py-3 text-xs font-medium uppercase tracking-wider rounded-full hover:opacity-90 transition-all"
+                className="group inline-flex items-center gap-2 bg-pink text-background px-8 py-3 text-xs font-medium uppercase tracking-wider rounded-full hover:opacity-85 transition-all duration-300"
               >
                 {sent ? "✓ Sent" : mode === "business" ? "Submit Brief" : "Send Message"}
                 {!sent && (
@@ -149,10 +117,7 @@ export default function Contact() {
           </motion.div>
         </div>
       </div>
-
-      <div className="mt-32">
-        <Footer />
-      </div>
+      <div className="mt-32"><Footer /></div>
     </main>
   )
 }

@@ -1,115 +1,42 @@
 import { useRef, useMemo } from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
 import * as THREE from "three"
-import { mouse, drag } from "@/hooks/useMouseParallax"
+import { pointer } from "@/hooks/usePointer"
+import { scrollProgress } from "@/hooks/useSmoothScroll"
+import { EffectComposer, Bloom, DepthOfField } from "@react-three/postprocessing"
 
-function Shape({ pos, scale: s, color, opacity }: { pos: THREE.Vector3; scale: number; color: THREE.Color; opacity: number }) {
-  const ref = useRef<THREE.Mesh>(null!)
-  const params = useMemo(() => {
-    const geos = [
-      { geo: new THREE.IcosahedronGeometry(0.3, 0), speed: 0.005 + Math.random() * 0.02 },
-      { geo: new THREE.OctahedronGeometry(0.25, 0), speed: 0.008 + Math.random() * 0.02 },
-      { geo: new THREE.TorusGeometry(0.4, 0.08, 16, 32), speed: 0.006 + Math.random() * 0.02 },
-      { geo: new THREE.TetrahedronGeometry(0.3, 0), speed: 0.01 + Math.random() * 0.015 },
-      { geo: new THREE.DodecahedronGeometry(0.2, 0), speed: 0.005 + Math.random() * 0.025 },
-    ]
-    return geos[Math.floor(Math.random() * geos.length)]
-  }, [])
-
-  useFrame(() => {
-    if (!ref.current) return
-    const depthFactor = 1 + pos.z * 0.1
-    ref.current.position.x = pos.x + mouse.x * depthFactor * 1.5
-    ref.current.position.y = pos.y + mouse.y * depthFactor * 1.2
-    ref.current.rotation.x += params.speed * 0.5
-    ref.current.rotation.y += params.speed
-    ref.current.rotation.z += params.speed * 0.3
-  })
-
-  return (
-    <mesh ref={ref} position={pos} scale={s} geometry={params.geo}>
-      <meshPhysicalMaterial
-        color={color}
-        transparent
-        opacity={opacity}
-        wireframe
-        metalness={0.6}
-        roughness={0.2}
-      />
-    </mesh>
-  )
-}
-
-function FloatingShapes() {
-  const shapes = useMemo(() => {
-    const arr = []
-    for (let i = 0; i < 12; i++) {
-      arr.push({
-        pos: new THREE.Vector3(
-          (Math.random() - 0.5) * 14,
-          (Math.random() - 0.5) * 10,
-          (Math.random() - 0.5) * 8 - 2
-        ),
-        scale: 0.5 + Math.random() * 1.2,
-        opacity: 0.08 + Math.random() * 0.15,
-        color: new THREE.Color().setHSL(0.03 + Math.random() * 0.05, 0.3, 0.7 + Math.random() * 0.2),
-      })
-    }
-    return arr
-  }, [])
-
-  return (
-    <group>
-      {shapes.map((s, i) => (
-        <Shape key={i} pos={s.pos} scale={s.scale} color={s.color} opacity={s.opacity} />
-      ))}
-    </group>
-  )
-}
-
-function Particles({ count = 1000 }: { count?: number }) {
+/* ---------- Starfield ---------- */
+function Stars({ count = 2000 }) {
   const ref = useRef<THREE.Points>(null!)
-  const [positions, colors, sizes] = useMemo(() => {
-    const pos = new Float32Array(count * 3)
-    const col = new Float32Array(count * 3)
-    const siz = new Float32Array(count)
+  const [pos, sizes] = useMemo(() => {
+    const p = new Float32Array(count * 3)
+    const s = new Float32Array(count)
     for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 20
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 16
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 12
-      const c = new THREE.Color().setHSL(0.03, 0.2, 0.5 + Math.random() * 0.4)
-      col[i * 3] = c.r
-      col[i * 3 + 1] = c.g
-      col[i * 3 + 2] = c.b
-      siz[i] = 0.02 + Math.random() * 0.03
+      p[i * 3] = (Math.random() - 0.5) * 40
+      p[i * 3 + 1] = (Math.random() - 0.5) * 30
+      p[i * 3 + 2] = (Math.random() - 0.5) * 30 - 5
+      s[i] = 0.01 + Math.random() * 0.04
     }
-    return [pos, col, siz]
+    return [p, s]
   }, [])
 
   useFrame((state) => {
     if (!ref.current) return
-    const pos = ref.current.geometry.attributes.position.array as Float32Array
-    for (let i = 0; i < count; i++) {
-      pos[i * 3] += Math.sin(state.clock.elapsedTime * 0.05 + i) * 0.0003
-      pos[i * 3 + 1] += Math.cos(state.clock.elapsedTime * 0.04 + i * 1.3) * 0.0003
-    }
-    ref.current.geometry.attributes.position.needsUpdate = true
-    ref.current.rotation.y = state.clock.elapsedTime * 0.015 + mouse.x * 0.02
-    ref.current.rotation.x = mouse.y * 0.02
+    ref.current.rotation.y = state.clock.elapsedTime * 0.003 + pointer.x * 0.01
+    ref.current.rotation.x = pointer.y * 0.005
   })
 
   return (
     <points ref={ref}>
       <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-        <bufferAttribute attach="attributes-color" args={[colors, 3]} />
+        <bufferAttribute attach="attributes-position" args={[pos, 3]} />
         <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
       </bufferGeometry>
       <pointsMaterial
         size={0.04}
-        vertexColors
+        color="#efded9"
         transparent
-        opacity={0.4}
+        opacity={0.3}
         sizeAttenuation
         blending={THREE.AdditiveBlending}
         depthWrite={false}
@@ -118,53 +45,110 @@ function Particles({ count = 1000 }: { count?: number }) {
   )
 }
 
-function CenterTorus() {
+/* ---------- Floating Wireframe Shapes ---------- */
+function ShapeLayer() {
+  const groupRef = useRef<THREE.Group>(null!)
+  const shapes = useMemo(() => {
+    const arr = []
+    for (let i = 0; i < 10; i++) {
+      const depth = -2 - Math.random() * 10
+      arr.push({
+        pos: new THREE.Vector3((Math.random() - 0.5) * 12, (Math.random() - 0.5) * 8, depth),
+        rotSpeed: 0.003 + Math.random() * 0.015,
+        scale: 0.4 + Math.random() * 1.2,
+        geo: new THREE.IcosahedronGeometry(0.35, 0),
+        color: new THREE.Color().setHSL(0.03, 0.15, 0.6 + Math.random() * 0.3),
+        opacity: 0.06 + Math.random() * 0.1,
+      })
+    }
+    return arr
+  }, [])
+
+  useFrame(() => {
+    if (!groupRef.current) return
+    groupRef.current.children.forEach((child, i) => {
+      const mesh = child as THREE.Mesh
+      const s = shapes[i]
+      if (!mesh || !s) return
+      const df = 1 + s.pos.z * 0.06
+      mesh.position.x = s.pos.x + pointer.x * df * 1.2
+      mesh.position.y = s.pos.y + pointer.y * df * 1.0
+      mesh.rotation.x += s.rotSpeed * 0.6
+      mesh.rotation.y += s.rotSpeed
+    })
+  })
+
+  return (
+    <group ref={groupRef}>
+      {shapes.map((s, i) => (
+        <mesh key={i} position={s.pos} scale={s.scale} geometry={s.geo}>
+          <meshPhysicalMaterial
+            color={s.color}
+            transparent
+            opacity={s.opacity}
+            wireframe
+            metalness={0.4}
+            roughness={0.3}
+          />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+/* ---------- Center Torus Knot ---------- */
+function CenterPiece() {
   const ref = useRef<THREE.Mesh>(null!)
 
   useFrame((state) => {
     if (!ref.current) return
-    const df = 1 + (-5) * 0.08
-    ref.current.position.x = mouse.x * df * 0.5
-    ref.current.position.y = mouse.y * df * 0.4
-    ref.current.rotation.x = state.clock.elapsedTime * 0.12 + mouse.y * 0.1
-    ref.current.rotation.y = state.clock.elapsedTime * 0.08 + mouse.x * 0.1
-    ref.current.position.y += Math.sin(state.clock.elapsedTime * 0.3) * 0.15
+    const scrolled = scrollProgress * 2
+    ref.current.position.x = pointer.x * 0.6
+    ref.current.position.y = pointer.y * 0.5 - scrolled * 0.3
+    ref.current.rotation.x = state.clock.elapsedTime * 0.15 + pointer.y * 0.08
+    ref.current.rotation.y = state.clock.elapsedTime * 0.1 + pointer.x * 0.08
+    ref.current.position.y += Math.sin(state.clock.elapsedTime * 0.3) * 0.1
   })
 
   return (
-    <mesh ref={ref} position={[0, 0, -2]}>
-      <torusKnotGeometry args={[1.2, 0.35, 64, 8]} />
+    <mesh ref={ref} position={[0, 0, -3]}>
+      <torusKnotGeometry args={[1.4, 0.4, 128, 16]} />
       <meshPhysicalMaterial
         color="#efded9"
-        metalness={0.3}
-        roughness={0.2}
+        metalness={0.2}
+        roughness={0.1}
         transparent
-        opacity={0.15}
+        opacity={0.12}
         wireframe
-        envMapIntensity={0.5}
+        emissive="#efded9"
+        emissiveIntensity={0.08}
       />
     </mesh>
   )
 }
 
-function GlowRings() {
+/* ---------- Orbiting Rings ---------- */
+function OrbitalRings() {
   const ref = useRef<THREE.Group>(null!)
 
   useFrame((state) => {
     if (!ref.current) return
-    ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.08) * 0.1 + mouse.y * 0.05
-    ref.current.rotation.y = state.clock.elapsedTime * 0.05 + mouse.x * 0.05
+    ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.06) * 0.08 + pointer.y * 0.03
+    ref.current.rotation.y = state.clock.elapsedTime * 0.04 + pointer.x * 0.03
   })
 
   return (
-    <group ref={ref} position={[0, 0, -3]}>
-      {[0, 1, 2, 3, 4].map((i) => (
-        <mesh key={i} rotation={[Math.PI / 2, 0, (i / 5) * Math.PI]}>
-          <ringGeometry args={[1.8 + i * 0.4, 1.82 + i * 0.4, 64]} />
+    <group ref={ref} position={[0, 0, -4]}>
+      {[0, 1, 2, 3, 4, 5].map((i) => (
+        <mesh
+          key={i}
+          rotation={[Math.PI / 2 + (i / 6) * 0.3, 0, (i / 6) * Math.PI]}
+        >
+          <ringGeometry args={[2 + i * 0.3, 2.02 + i * 0.3, 80]} />
           <meshBasicMaterial
             color="#efded9"
             transparent
-            opacity={0.04 + i * 0.02}
+            opacity={0.03 + i * 0.015}
             side={THREE.DoubleSide}
             depthWrite={false}
           />
@@ -174,25 +158,30 @@ function GlowRings() {
   )
 }
 
-function SceneGroup() {
-  const groupRef = useRef<THREE.Group>(null!)
-
-  useFrame(() => {
-    if (!groupRef.current) return
-    groupRef.current.rotation.x += (drag.rotationX - groupRef.current.rotation.x) * 0.08
-    groupRef.current.rotation.y += (drag.rotationY - groupRef.current.rotation.y) * 0.08
-  })
-
+/* ---------- Scene ---------- */
+function SceneContent() {
   return (
-    <group ref={groupRef}>
-      <ambientLight intensity={0.3} />
-      <pointLight position={[5, 5, 5]} intensity={0.5} color="#efded9" />
-      <pointLight position={[-5, -3, -5]} intensity={0.3} color="#ffffff" />
-      <Particles />
-      <FloatingShapes />
-      <CenterTorus />
-      <GlowRings />
-    </group>
+    <>
+      <ambientLight intensity={0.2} />
+      <pointLight position={[5, 5, 5]} intensity={0.4} color="#efded9" />
+      <pointLight position={[-5, -3, -5]} intensity={0.2} color="#ffffff" />
+      <Stars />
+      <ShapeLayer />
+      <CenterPiece />
+      <OrbitalRings />
+      <EffectComposer>
+        <Bloom
+          luminanceThreshold={0.6}
+          luminanceSmoothing={0.9}
+          intensity={0.4}
+        />
+        <DepthOfField
+          focusDistance={0.02}
+          focalLength={0.03}
+          bokehScale={2}
+        />
+      </EffectComposer>
+    </>
   )
 }
 
@@ -200,7 +189,7 @@ export default function Scene3D() {
   return (
     <div className="fixed inset-0 z-0 touch-none">
       <Canvas
-        camera={{ position: [0, 0, 6], fov: 60, near: 0.1, far: 50 }}
+        camera={{ position: [0, 0, 6], fov: 65, near: 0.1, far: 50 }}
         dpr={[1, 1.5]}
         gl={{
           antialias: true,
@@ -209,7 +198,7 @@ export default function Scene3D() {
         }}
         style={{ touchAction: "none" }}
       >
-        <SceneGroup />
+        <SceneContent />
       </Canvas>
     </div>
   )

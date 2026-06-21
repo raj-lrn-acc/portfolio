@@ -2,31 +2,26 @@ import { useEffect, useRef } from "react"
 import { motion, useMotionValue, useSpring } from "framer-motion"
 
 export function Cursor() {
-  const cursorX = useMotionValue(-100)
-  const cursorY = useMotionValue(-100)
-  const springX = useSpring(cursorX, { stiffness: 800, damping: 30 })
-  const springY = useSpring(cursorY, { stiffness: 800, damping: 30 })
+  const x = useMotionValue(-100)
+  const y = useMotionValue(-100)
+  const sx = useSpring(x, { stiffness: 600, damping: 28 })
+  const sy = useSpring(y, { stiffness: 600, damping: 28 })
   const dotRef = useRef<HTMLDivElement>(null)
   const scale = useMotionValue(1)
 
   useEffect(() => {
     const move = (e: MouseEvent) => {
-      cursorX.set(e.clientX)
-      cursorY.set(e.clientY)
+      x.set(e.clientX)
+      y.set(e.clientY)
     }
 
-    const over = () => {
-      dotRef.current?.classList.add("hovering")
-      scale.set(2)
-    }
-    const out = () => {
-      dotRef.current?.classList.remove("hovering")
-      scale.set(1)
-    }
+    const over = () => scale.set(2.2)
+    const out = () => scale.set(1)
 
     window.addEventListener("mousemove", move, { passive: true })
-    const interactives = document.querySelectorAll("a, button, input, textarea, [role='button']")
-    interactives.forEach((el) => {
+
+    const els = document.querySelectorAll("a, button, input, textarea, [role='button']")
+    els.forEach((el) => {
       el.addEventListener("mouseenter", over)
       el.addEventListener("mouseleave", out)
     })
@@ -41,18 +36,23 @@ export function Cursor() {
       document.body.style.cursor = ""
       style.remove()
       window.removeEventListener("mousemove", move)
-      interactives.forEach((el) => {
+      els.forEach((el) => {
         el.removeEventListener("mouseenter", over)
         el.removeEventListener("mouseleave", out)
       })
     }
-  }, [cursorX, cursorY, scale])
+  }, [x, y, scale])
 
   return (
     <div className="fixed top-0 left-0 pointer-events-none z-[99999] hidden md:block">
       <motion.div
-        style={{ x: springX, y: springY, scale }}
-        className="-translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-foreground"
+        ref={dotRef}
+        style={{ x: sx, y: sy, scale }}
+        className="-translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-pink"
+      />
+      <motion.div
+        style={{ x: sx, y: sy }}
+        className="-translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-pink/30 absolute"
       />
     </div>
   )

@@ -3,7 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { Header } from "@/components/Header"
 import { Cursor } from "@/components/Cursor"
 import { Loader } from "@/components/Loader"
-import { useMouseParallax } from "@/hooks/useMouseParallax"
+import { useSmoothScroll } from "@/hooks/useSmoothScroll"
+import { usePointer } from "@/hooks/usePointer"
 
 const Home = lazy(() => import("@/pages/Home"))
 const Projects = lazy(() => import("@/pages/Projects"))
@@ -11,12 +12,11 @@ const Contact = lazy(() => import("@/pages/Contact"))
 
 export default function App() {
   const [showLoader, setShowLoader] = useState(true)
-  useMouseParallax()
+  useSmoothScroll()
+  usePointer()
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.scrollTo(0, 0)
-    }
+    window.scrollTo(0, 0)
   }, [])
 
   return (

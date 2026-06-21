@@ -1,50 +1,35 @@
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import { projects } from "@/data/projects"
 import { Footer } from "@/components/Footer"
-import Scene3D from "@/components/Scene3D"
 
-const transition = { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] as const }
+const ease = [0.25, 0.1, 0.25, 1] as const
 const fadeUp = {
-  initial: { opacity: 0, y: 24 },
+  initial: { opacity: 0, y: 30 },
   animate: { opacity: 1, y: 0 },
-  transition,
+  transition: { duration: 0.8, ease },
 }
 
 export default function Home() {
   const gridRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const handleMouse = (e: MouseEvent) => {
-      if (!gridRef.current) return
-      const rect = gridRef.current.getBoundingClientRect()
-      const x = (e.clientX - rect.left) / rect.width - 0.5
-      const y = (e.clientY - rect.top) / rect.height - 0.5
-      gridRef.current.style.setProperty("--mouse-x", `${x * 20}px`)
-      gridRef.current.style.setProperty("--mouse-y", `${y * 20}px`)
-    }
-    window.addEventListener("mousemove", handleMouse)
-    return () => window.removeEventListener("mousemove", handleMouse)
-  }, [])
-
   return (
     <main className="relative">
-      <Scene3D />
-      {/* Hero */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="relative z-10 text-center px-6">
+      {/* Hero - transparent overlay */}
+      <section className="relative min-h-screen flex items-center justify-center pointer-events-none">
+        <div className="relative z-10 text-center px-6 pointer-events-auto">
           <motion.p
             {...fadeUp}
             transition={{ ...fadeUp.transition, delay: 0.2 }}
-            className="text-xs tracking-[0.3em] uppercase text-muted-foreground mb-6 font-sans"
+            className="text-xs tracking-[0.3em] uppercase text-white/50 mb-6 font-sans"
           >
             Portfolio &mdash; 2026
           </motion.p>
           <motion.h1
             {...fadeUp}
             transition={{ ...fadeUp.transition, delay: 0.4 }}
-            className="text-5xl sm:text-7xl md:text-9xl font-serif tracking-tight leading-[0.9] text-foreground"
+            className="text-5xl sm:text-7xl md:text-9xl font-serif tracking-tight leading-[0.9] text-white"
           >
             Rajveer
             <br />
@@ -53,7 +38,7 @@ export default function Home() {
           <motion.p
             {...fadeUp}
             transition={{ ...fadeUp.transition, delay: 0.6 }}
-            className="mt-6 text-sm text-muted-foreground max-w-md mx-auto font-sans leading-relaxed"
+            className="mt-6 text-sm text-white/40 max-w-md mx-auto font-sans leading-relaxed"
           >
             Enterprise infrastructure, identity access,
             <br />
@@ -62,28 +47,28 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.2, duration: 0.8, ease: [0.25, 0.1, 0.25, 1] as const }}
-            className="mt-10 flex items-center justify-center gap-3 text-xs text-muted-foreground"
+            transition={{ delay: 1.2, duration: 0.8, ease }}
+            className="mt-10 flex items-center justify-center gap-3 text-xs text-white/30"
           >
-            <span className="w-8 h-px bg-muted-foreground/50" />
-            <span className="tracking-widest uppercase font-sans animate-pulse">Drag to explore</span>
-            <span className="w-8 h-px bg-muted-foreground/50" />
+            <span className="w-8 h-px bg-white/20" />
+            <span className="tracking-widest uppercase font-sans animate-pulse">Scroll to explore</span>
+            <span className="w-8 h-px bg-white/20" />
           </motion.div>
         </div>
       </section>
 
-      {/* Selected Projects */}
+      {/* Projects */}
       <section className="relative z-10 px-6 py-32">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const }}
+            transition={{ duration: 0.6, ease }}
             className="flex items-center gap-3 mb-16"
           >
             <span className="text-2xl text-pink font-serif italic">&quot;</span>
-            <span className="text-xs tracking-widest uppercase text-muted-foreground font-sans">Selected Projects</span>
+            <span className="text-xs tracking-widest uppercase text-white/50 font-sans">Selected Projects</span>
           </motion.div>
 
           <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -93,11 +78,11 @@ export default function Home() {
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.08, duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const }}
+                transition={{ delay: i * 0.08, duration: 0.6, ease }}
               >
                 <Link
                   to={`/projects`}
-                  className="project-card block group relative overflow-hidden rounded-lg bg-card border border-border/50 p-8"
+                  className="project-card block group relative overflow-hidden rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-8 hover:bg-white/10 transition-all duration-500"
                 >
                   <div
                     className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500"
@@ -105,20 +90,14 @@ export default function Home() {
                   />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-4">
-                      <span className="text-[10px] tracking-widest uppercase text-muted-foreground font-sans">
-                        {project.category}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground font-sans">
-                        {project.year}
-                      </span>
+                      <span className="text-[10px] tracking-widest uppercase text-white/40 font-sans">{project.category}</span>
+                      <span className="text-[10px] text-white/40 font-sans">{project.year}</span>
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-serif tracking-tight mb-2 group-hover:text-pink transition-colors">
+                    <h3 className="text-xl sm:text-2xl font-serif tracking-tight mb-2 text-white group-hover:text-pink transition-colors">
                       {project.title}
                     </h3>
-                    <p className="text-xs text-muted-foreground font-sans leading-relaxed">
-                      {project.subtitle}
-                    </p>
-                    <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground group-hover:text-foreground transition-colors">
+                    <p className="text-xs text-white/40 font-sans leading-relaxed">{project.subtitle}</p>
+                    <div className="mt-4 flex items-center gap-2 text-xs text-white/40 group-hover:text-white transition-colors">
                       <span className="font-sans">View Project</span>
                       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="group-hover:translate-x-1 transition-transform">
                         <path d="M1 6h8M6 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -134,12 +113,12 @@ export default function Home() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const }}
+            transition={{ duration: 0.6, ease }}
             className="mt-12 text-center"
           >
             <Link
               to="/projects"
-              className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-foreground/80 hover:text-pink transition-colors"
+              className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-white/60 hover:text-pink transition-colors"
             >
               View all projects
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -150,15 +129,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Let's work together */}
-      <section className="relative z-10 px-6 py-32 border-t border-border/50">
+      {/* Contact CTA */}
+      <section className="relative z-10 px-6 py-32 border-t border-white/5">
         <div className="max-w-7xl mx-auto text-center">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const }}
-            className="text-xs tracking-widest uppercase text-muted-foreground mb-6 font-sans"
+            transition={{ duration: 0.6, ease }}
+            className="text-xs tracking-widest uppercase text-white/40 mb-6 font-sans"
           >
             Let&apos;s Work Together
           </motion.p>
@@ -166,14 +145,12 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1, duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const }}
-            className="text-4xl sm:text-5xl font-serif tracking-tight leading-tight mb-8"
+            transition={{ delay: 0.1, duration: 0.6, ease }}
+            className="text-4xl sm:text-5xl font-serif tracking-tight leading-tight mb-8 text-white"
           >
             Have a project in mind?
             <br />
-            <Link to="/contact" className="text-pink hover:underline underline-offset-4">
-              Get in touch
-            </Link>
+            <Link to="/contact" className="text-pink hover:underline underline-offset-4">Get in touch</Link>
           </motion.p>
         </div>
       </section>
